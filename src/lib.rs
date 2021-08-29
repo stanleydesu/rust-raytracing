@@ -9,8 +9,20 @@ impl Vec3 {
         }
     }
 
-    pub fn new_default() -> Vec3 {
+    pub fn zero() -> Vec3 {
         Vec3::new(0.0, 0.0, 0.0)
+    }
+
+    pub fn x(&self) -> f64 {
+        self.v[0]
+    }
+
+    pub fn y(&self) -> f64 {
+        self.v[1]
+    }
+
+    pub fn z(&self) -> f64 {
+        self.v[2]
     }
 }
 
@@ -19,7 +31,7 @@ mod tests {
     use super::*;
     #[test]
     fn default_constructor() {
-        let vec = Vec3::new_default();
+        let vec = Vec3::zero();
         assert_eq!(vec.v, [0.0, 0.0, 0.0]);
     }
 
