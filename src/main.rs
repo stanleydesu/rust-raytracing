@@ -1,5 +1,3 @@
-// use mylib::owo;
-
 fn main() {
     let image_width = 256;
     let image_height = 256;
