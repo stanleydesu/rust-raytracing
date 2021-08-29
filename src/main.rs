@@ -11,6 +11,7 @@ fn main() {
     println!("{}", color_max - 1);
 
     for y in (0..image_height).rev() {
+        eprintln!("Scanlines remaining: {}", y + 1);
         for x in 0..image_width {
             // redness increases from left to right (0 to 0.99...)
             let r_scale = x as f64 / image_width as f64;
