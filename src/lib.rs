@@ -1,4 +1,4 @@
-use std::ops::{Index, IndexMut, Neg};
+use std::ops::{AddAssign, Index, IndexMut, Neg};
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -47,6 +47,14 @@ impl Index<usize> for Vec3 {
 impl IndexMut<usize> for Vec3 {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.v[index]
+    }
+}
+
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, rhs: Vec3) {
+        self.v[0] += rhs.v[0];
+        self.v[1] += rhs.v[1];
+        self.v[2] += rhs.v[2];
     }
 }
 
@@ -99,5 +107,14 @@ mod tests {
     fn index_mut_operator_panic() {
         let mut vec = Vec3::new(1.0, 2.0, 3.0);
         vec[3] = 42.0;
+    }
+
+    #[test]
+    fn add_assign_operator() {
+        let mut vec1 = Vec3::new(1.0, 2.0, 3.0);
+        let vec2 = Vec3::new(-1.0, 2.5, 3.6);
+        let expected_arr = [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
+        vec1 += vec2;
+        assert_eq!(vec1.v, expected_arr);
     }
 }
