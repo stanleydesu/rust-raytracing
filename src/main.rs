@@ -15,7 +15,7 @@ fn main() {
             let r_scale = x as f64 / image_width as f64;
             // greenness decreases from top to bottom (0.99... to 0)
             let g_scale = y as f64 / image_height as f64;
-            let b_scale = 0.5 as f64;
+            let b_scale = 0.5_f64;
             let r_intensity = (r_scale * color_max as f64) as u8;
             let g_intensity = (g_scale * color_max as f64) as u8;
             let b_intensity = (b_scale * color_max as f64) as u8;

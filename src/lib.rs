@@ -1,4 +1,4 @@
-use std::ops::{AddAssign, Index, IndexMut, Neg};
+use std::ops::{AddAssign, DivAssign, Index, IndexMut, MulAssign, Neg};
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -55,6 +55,20 @@ impl AddAssign for Vec3 {
         self.v[0] += rhs.v[0];
         self.v[1] += rhs.v[1];
         self.v[2] += rhs.v[2];
+    }
+}
+
+impl MulAssign<f64> for Vec3 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.v[0] *= rhs;
+        self.v[1] *= rhs;
+        self.v[2] *= rhs;
+    }
+}
+
+impl DivAssign<f64> for Vec3 {
+    fn div_assign(&mut self, rhs: f64) {
+        *self *= 1_f64 / rhs
     }
 }
 
@@ -116,5 +130,23 @@ mod tests {
         let expected_arr = [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
         vec1 += vec2;
         assert_eq!(vec1.v, expected_arr);
+    }
+
+    #[test]
+    fn mul_assign_operator() {
+        let mut vec = Vec3::new(1.0, 2.0, 3.0);
+        let scalar = 5.0;
+        let expected_arr = [vec[0] * scalar, vec[1] * scalar, vec[2] * scalar];
+        vec *= scalar;
+        assert_eq!(vec.v, expected_arr);
+    }
+
+    #[test]
+    fn div_assign_operator() {
+        let mut vec = Vec3::new(1.0, 2.0, 3.0);
+        let scalar = 5.0;
+        let expected_arr = [vec[0] / scalar, vec[1] / scalar, vec[2] / scalar];
+        vec /= scalar;
+        assert_eq!(vec.v, expected_arr);
     }
 }
