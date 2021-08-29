@@ -1,4 +1,4 @@
-use std::ops::Neg;
+use std::ops::{Index, IndexMut, Neg};
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -36,6 +36,20 @@ impl Neg for Vec3 {
     }
 }
 
+impl Index<usize> for Vec3 {
+    type Output = f64;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.v[index]
+    }
+}
+
+impl IndexMut<usize> for Vec3 {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.v[index]
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -57,5 +71,33 @@ mod tests {
         let vec_arr = (-vec).v;
         let expected_arr = [-1.0, -2.0, -3.0];
         assert_eq!(vec_arr, expected_arr);
+    }
+
+    #[test]
+    fn index_operator() {
+        let vec = Vec3::new(1.0, 2.0, 3.0);
+        assert_eq!(vec[0], 1.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn index_operator_panic() {
+        let vec = Vec3::new(1.0, 2.0, 3.0);
+        vec[3];
+    }
+
+    #[test]
+    fn index_mut_operator() {
+        let mut vec = Vec3::new(1.0, 2.0, 3.0);
+        let expected_arr = [-1.0, -2.0, -3.0];
+        vec[0] = expected_arr[0];
+        assert_eq!(vec[0], expected_arr[0]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn index_mut_operator_panic() {
+        let mut vec = Vec3::new(1.0, 2.0, 3.0);
+        vec[3] = 42.0;
     }
 }
