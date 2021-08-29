@@ -1,3 +1,6 @@
+use std::ops::Neg;
+
+#[derive(Copy, Clone)]
 pub struct Vec3 {
     v: [f64; 3],
 }
@@ -26,6 +29,13 @@ impl Vec3 {
     }
 }
 
+impl Neg for Vec3 {
+    type Output = Self;
+    fn neg(self) -> Self::Output {
+        Vec3::new(-self.x(), -self.y(), -self.z())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -39,5 +49,13 @@ mod tests {
     fn new_constructor() {
         let vec = Vec3::new(1.0, 2.0, 3.0);
         assert_eq!(vec.v, [1.0, 2.0, 3.0]);
+    }
+
+    #[test]
+    fn neg_operator() {
+        let vec = Vec3::new(1.0, 2.0, 3.0);
+        let vec_arr = (-vec).v;
+        let expected_arr = [-1.0, -2.0, -3.0];
+        assert_eq!(vec_arr, expected_arr);
     }
 }
