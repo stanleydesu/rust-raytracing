@@ -96,6 +96,15 @@ mod tests {
     }
 
     #[test]
+    fn xyz_accessors() {
+        let values = [1.0, 2.4, 3.9];
+        let v = Vec3::new(values[0], values[1], values[2]);
+        assert_relative_eq!(v.x(), values[0]);
+        assert_relative_eq!(v.y(), values[1]);
+        assert_relative_eq!(v.z(), values[2]);
+    }
+
+    #[test]
     fn neg_operator() {
         let v = -(Vec3::new(1.0, 2.0, 3.0));
         let expected = Vec3::new(-1.0, -2.0, -3.0);
@@ -142,7 +151,7 @@ mod tests {
     #[test]
     fn mul_assign_operator() {
         let mut v = Vec3::new(1.0, 2.0, 3.0);
-        let scalar = 5.0;
+        let scalar = 42.3116;
         let expected = Vec3::new(v[0] * scalar, v[1] * scalar, v[2] * scalar);
         v *= scalar;
         assert_eq_vec3s(v, expected);
@@ -151,7 +160,7 @@ mod tests {
     #[test]
     fn div_assign_operator() {
         let mut v = Vec3::new(1.0, 2.0, 3.0);
-        let scalar = 5.0;
+        let scalar = 0.91;
         let expected = Vec3::new(v[0] / scalar, v[1] / scalar, v[2] / scalar);
         v /= scalar;
         assert_eq_vec3s(v, expected);
