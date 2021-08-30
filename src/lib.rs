@@ -125,6 +125,13 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+    fn mul(self, other: Self::Output) -> Self::Output {
+        other * self
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -270,5 +277,6 @@ mod tests {
         let scalar = 0.49;
         let expected = Vec3::new(v[0] * scalar, v[1] * scalar, v[2] * scalar);
         assert_eq_vec3s(v * scalar, expected);
+        assert_eq_vec3s(scalar * v, expected);
     }
 }
