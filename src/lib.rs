@@ -27,6 +27,16 @@ impl Vec3 {
     pub fn z(&self) -> f64 {
         self.v[2]
     }
+
+    pub fn length(&self) -> f64 {
+        self.length_squared().sqrt()
+    }
+
+    pub fn length_squared(&self) -> f64 {
+        self.v
+            .iter()
+            .fold(0_f64, |total, &scalar| total + (scalar * scalar))
+    }
 }
 
 impl Neg for Vec3 {
@@ -164,5 +174,19 @@ mod tests {
         let expected = Vec3::new(v[0] / scalar, v[1] / scalar, v[2] / scalar);
         v /= scalar;
         assert_eq_vec3s(v, expected);
+    }
+
+    #[test]
+    fn length_squared() {
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        let expected = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+        assert_relative_eq!(v.length_squared(), expected);
+    }
+
+    #[test]
+    fn length() {
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        let expected = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+        assert_relative_eq!(v.length(), expected);
     }
 }
