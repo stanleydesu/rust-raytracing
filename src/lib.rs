@@ -91,44 +91,36 @@ impl fmt::Display for Vec3 {
 
 impl Add for Vec3 {
     type Output = Self;
-    fn add(self, other: Self) -> Self {
-        Vec3::new(
-            self.x() + other.x(),
-            self.y() + other.y(),
-            self.z() + other.z(),
-        )
+    fn add(self, rhs: Self) -> Self {
+        Vec3::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
     }
 }
 
 impl Sub for Vec3 {
     type Output = Self;
-    fn sub(self, other: Self) -> Self {
-        self + -other
+    fn sub(self, rhs: Self) -> Self {
+        self + -rhs
     }
 }
 
 impl Mul<Vec3> for Vec3 {
     type Output = Self;
-    fn mul(self, other: Self) -> Self {
-        Vec3::new(
-            self.x() * other.x(),
-            self.y() * other.y(),
-            self.z() * other.z(),
-        )
+    fn mul(self, rhs: Self) -> Self {
+        Vec3::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
     }
 }
 
 impl Mul<f64> for Vec3 {
     type Output = Self;
-    fn mul(self, other: f64) -> Self {
-        Vec3::new(self.x() * other, self.y() * other, self.z() * other)
+    fn mul(self, rhs: f64) -> Self {
+        Vec3::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
     }
 }
 
 impl Mul<Vec3> for f64 {
     type Output = Vec3;
-    fn mul(self, other: Self::Output) -> Self::Output {
-        other * self
+    fn mul(self, rhs: Self::Output) -> Self::Output {
+        rhs * self
     }
 }
 
@@ -235,14 +227,14 @@ mod tests {
 
     #[test]
     fn length_squared() {
-        let v = Vec3::new(1.0, 2.0, 3.0);
+        let v = Vec3::new(1.1, 2.33, 3.89);
         let expected = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
         assert_relative_eq!(v.length_squared(), expected);
     }
 
     #[test]
     fn length() {
-        let v = Vec3::new(1.0, 2.0, 3.0);
+        let v = Vec3::new(1.1, 2.33, 3.89);
         let expected = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
         assert_relative_eq!(v.length(), expected);
     }
@@ -256,24 +248,24 @@ mod tests {
 
     #[test]
     fn add_operator() {
-        let v1 = Vec3::new(1.0, 2.0, 3.0);
-        let v2 = Vec3::new(-1.0, 2.5, 3.6);
+        let v1 = Vec3::new(1.1, 2.33, 3.89);
+        let v2 = Vec3::new(-1.19, 2.66, 3.77);
         let expected = Vec3::new(v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]);
         assert_eq_vec3s(v1 + v2, expected);
     }
 
     #[test]
     fn sub_operator() {
-        let v1 = Vec3::new(1.0, 2.0, 3.0);
-        let v2 = Vec3::new(-1.0, 2.5, 3.6);
+        let v1 = Vec3::new(1.1, 2.33, 3.89);
+        let v2 = Vec3::new(-1.19, 2.66, 3.77);
         let expected = Vec3::new(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]);
         assert_eq_vec3s(v1 - v2, expected);
     }
 
     #[test]
     fn mul_vec3s_operator() {
-        let v1 = Vec3::new(1.0, 2.0, 3.0);
-        let v2 = Vec3::new(-1.0, 2.5, 3.6);
+        let v1 = Vec3::new(1.1, 2.33, 3.89);
+        let v2 = Vec3::new(-1.19, 2.66, 3.77);
         let expected = Vec3::new(v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2]);
         assert_eq_vec3s(v1 * v2, expected);
     }
