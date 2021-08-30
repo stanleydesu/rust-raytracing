@@ -85,75 +85,75 @@ mod tests {
 
     #[test]
     fn default_constructor() {
-        let vec = Vec3::zero();
-        assert_eq!(vec.v, [0.0, 0.0, 0.0]);
+        let v = Vec3::zero();
+        assert_eq!(v.v, [0.0, 0.0, 0.0]);
     }
 
     #[test]
     fn new_constructor() {
-        let vec = Vec3::new(1.0, 2.0, 3.0);
-        assert_eq!(vec.v, [1.0, 2.0, 3.0]);
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        assert_eq!(v.v, [1.0, 2.0, 3.0]);
     }
 
     #[test]
     fn neg_operator() {
-        let vec = -(Vec3::new(1.0, 2.0, 3.0));
+        let v = -(Vec3::new(1.0, 2.0, 3.0));
         let expected = Vec3::new(-1.0, -2.0, -3.0);
-        assert_eq_vec3s(vec, expected);
+        assert_eq_vec3s(v, expected);
     }
 
     #[test]
     fn index_operator() {
-        let vec = Vec3::new(1.0, 2.0, 3.0);
-        assert_eq!(vec[0], 1.0);
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        assert_relative_eq!(v[0], 1.0);
     }
 
     #[test]
     #[should_panic]
     fn index_operator_panic() {
-        let vec = Vec3::new(1.0, 2.0, 3.0);
-        vec[3];
+        let v = Vec3::new(1.0, 2.0, 3.0);
+        v[3];
     }
 
     #[test]
     fn index_mut_operator() {
-        let mut vec = Vec3::new(1.0, 2.0, 3.0);
+        let mut v = Vec3::new(1.0, 2.0, 3.0);
         let expected = Vec3::new(-1.0, -2.0, -3.0);
-        vec[0] = expected[0];
-        assert_relative_eq!(vec[0], expected[0]);
+        v[0] = expected[0];
+        assert_relative_eq!(v[0], expected[0]);
     }
 
     #[test]
     #[should_panic]
     fn index_mut_operator_panic() {
-        let mut vec = Vec3::new(1.0, 2.0, 3.0);
-        vec[3] = 42.0;
+        let mut v = Vec3::new(1.0, 2.0, 3.0);
+        v[3] = 42.0;
     }
 
     #[test]
     fn add_assign_operator() {
-        let mut vec1 = Vec3::new(1.0, 2.0, 3.0);
-        let vec2 = Vec3::new(-1.0, 2.5, 3.6);
-        let expected = Vec3::new(vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]);
-        vec1 += vec2;
-        assert_eq_vec3s(vec1, expected);
+        let mut v1 = Vec3::new(1.0, 2.0, 3.0);
+        let v2 = Vec3::new(-1.0, 2.5, 3.6);
+        let expected = Vec3::new(v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]);
+        v1 += v2;
+        assert_eq_vec3s(v1, expected);
     }
 
     #[test]
     fn mul_assign_operator() {
-        let mut vec = Vec3::new(1.0, 2.0, 3.0);
+        let mut v = Vec3::new(1.0, 2.0, 3.0);
         let scalar = 5.0;
-        let expected = Vec3::new(vec[0] * scalar, vec[1] * scalar, vec[2] * scalar);
-        vec *= scalar;
-        assert_eq_vec3s(vec, expected);
+        let expected = Vec3::new(v[0] * scalar, v[1] * scalar, v[2] * scalar);
+        v *= scalar;
+        assert_eq_vec3s(v, expected);
     }
 
     #[test]
     fn div_assign_operator() {
-        let mut vec = Vec3::new(1.0, 2.0, 3.0);
+        let mut v = Vec3::new(1.0, 2.0, 3.0);
         let scalar = 5.0;
-        let expected = Vec3::new(vec[0] / scalar, vec[1] / scalar, vec[2] / scalar);
-        vec /= scalar;
-        assert_eq_vec3s(vec, expected);
+        let expected = Vec3::new(v[0] / scalar, v[1] / scalar, v[2] / scalar);
+        v /= scalar;
+        assert_eq_vec3s(v, expected);
     }
 }
