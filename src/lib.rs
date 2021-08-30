@@ -36,9 +36,11 @@ impl Vec3 {
     }
 
     pub fn length_squared(&self) -> f64 {
-        self.v
-            .iter()
-            .fold(0_f64, |total, &scalar| total + (scalar * scalar))
+        self.v.iter().fold(0_f64, |total, &d| total + (d * d))
+    }
+
+    pub fn dot(lhs: Vec3, rhs: Vec3) -> f64 {
+        lhs.x() * rhs.x() + lhs.y() * rhs.y() + lhs.z() * rhs.z()
     }
 }
 
@@ -51,7 +53,6 @@ impl Neg for Vec3 {
 
 impl Index<usize> for Vec3 {
     type Output = f64;
-
     fn index(&self, index: usize) -> &Self::Output {
         &self.v[index]
     }
@@ -80,8 +81,6 @@ impl DivAssign<f64> for Vec3 {
         *self *= 1_f64 / rhs
     }
 }
-
-// utility functions
 
 impl fmt::Display for Vec3 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -127,7 +126,7 @@ impl Mul<Vec3> for f64 {
 impl Div<f64> for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: f64) -> Self::Output {
-        Vec3::new(self.x() / rhs, self.y() / rhs, self.z() / rhs)
+        self * (1_f64 / rhs)
     }
 }
 
@@ -165,8 +164,8 @@ mod tests {
 
     #[test]
     fn neg_operator() {
-        let v = -(Vec3::new(1.0, 2.0, 3.0));
-        let expected = Vec3::new(-1.0, -2.0, -3.0);
+        let v = -(Vec3::new(1.0042, 2.3332, 3.141242));
+        let expected = Vec3::new(-1.0042, -2.3332, -3.141242);
         assert_eq_vec3s(v, expected);
     }
 
@@ -285,5 +284,13 @@ mod tests {
         let scalar = 0.49;
         let expected = Vec3::new(v[0] / scalar, v[1] / scalar, v[2] / scalar);
         assert_eq_vec3s(v / scalar, expected);
+    }
+
+    #[test]
+    fn dot() {
+        let v1 = Vec3::new(1.1, 2.33, 3.89);
+        let v2 = Vec3::new(-1.19, 2.66, 3.77);
+        let expected = v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+        assert_eq!(Vec3::dot(v1, v2), expected);
     }
 }
