@@ -1,6 +1,6 @@
 use std::{
     fmt,
-    ops::{Add, AddAssign, DivAssign, Index, IndexMut, MulAssign, Neg, Sub},
+    ops::{Add, AddAssign, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub},
 };
 
 #[derive(Copy, Clone)]
@@ -71,7 +71,7 @@ impl AddAssign for Vec3 {
 
 impl MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, rhs: f64) {
-        self.v.iter_mut().for_each(|el| *el *= rhs);
+        *self = *self * rhs;
     }
 }
 
@@ -104,6 +104,24 @@ impl Sub for Vec3 {
     type Output = Self;
     fn sub(self, other: Self) -> Self {
         self + -other
+    }
+}
+
+impl Mul<Vec3> for Vec3 {
+    type Output = Self;
+    fn mul(self, other: Self) -> Self {
+        Vec3::new(
+            self.x() * other.x(),
+            self.y() * other.y(),
+            self.z() * other.z(),
+        )
+    }
+}
+
+impl Mul<f64> for Vec3 {
+    type Output = Self;
+    fn mul(self, other: f64) -> Self {
+        Vec3::new(self.x() * other, self.y() * other, self.z() * other)
     }
 }
 
@@ -236,5 +254,21 @@ mod tests {
         let v2 = Vec3::new(-1.0, 2.5, 3.6);
         let expected = Vec3::new(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]);
         assert_eq_vec3s(v1 - v2, expected);
+    }
+
+    #[test]
+    fn mul_vec3s_operator() {
+        let v1 = Vec3::new(1.0, 2.0, 3.0);
+        let v2 = Vec3::new(-1.0, 2.5, 3.6);
+        let expected = Vec3::new(v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2]);
+        assert_eq_vec3s(v1 * v2, expected);
+    }
+
+    #[test]
+    fn mul_scalar_operator() {
+        let v = Vec3::new(1.1, 2.33, 3.89);
+        let scalar = 0.49;
+        let expected = Vec3::new(v[0] * scalar, v[1] * scalar, v[2] * scalar);
+        assert_eq_vec3s(v * scalar, expected);
     }
 }
