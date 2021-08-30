@@ -50,6 +50,10 @@ impl Vec3 {
             lhs.x() * rhs.y() - lhs.y() * rhs.x(),
         )
     }
+
+    pub fn unit(vec: Vec3) -> Vec3 {
+        vec / vec.length()
+    }
 }
 
 impl Neg for Vec3 {
@@ -295,7 +299,7 @@ mod tests {
     }
 
     #[test]
-    fn dot() {
+    fn dot_product() {
         let v1 = Vec3::new(1.1, 2.33, 3.89);
         let v2 = Vec3::new(-1.19, 2.66, 3.77);
         let expected = v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
@@ -303,7 +307,7 @@ mod tests {
     }
 
     #[test]
-    fn cross() {
+    fn cross_product() {
         let v1 = Vec3::new(1.1, 2.33, 3.89);
         let v2 = Vec3::new(-1.19, 2.66, 3.77);
         let expected = Vec3::new(
@@ -312,5 +316,11 @@ mod tests {
             v1[0] * v2[1] - v1[1] * v2[0],
         );
         assert_eq_vec3s(Vec3::cross(v1, v2), expected);
+    }
+
+    #[test]
+    fn unit_vector() {
+        let v = Vec3::new(1.1, 2.33, 3.89);
+        assert_relative_eq!(Vec3::unit(v).length(), 1_f64);
     }
 }
