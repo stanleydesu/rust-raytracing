@@ -70,9 +70,7 @@ impl AddAssign for Vec3 {
 
 impl MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, rhs: f64) {
-        self.v[0] *= rhs;
-        self.v[1] *= rhs;
-        self.v[2] *= rhs;
+        self.v.iter_mut().for_each(|el| *el *= rhs);
     }
 }
 
