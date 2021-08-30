@@ -1,6 +1,6 @@
 use std::{
     fmt,
-    ops::{Add, AddAssign, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub},
+    ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub},
 };
 
 #[derive(Copy, Clone)]
@@ -129,6 +129,13 @@ impl Mul<Vec3> for f64 {
     type Output = Vec3;
     fn mul(self, other: Self::Output) -> Self::Output {
         other * self
+    }
+}
+
+impl Div<f64> for Vec3 {
+    type Output = Vec3;
+    fn div(self, rhs: f64) -> Self::Output {
+        Vec3::new(self.x() / rhs, self.y() / rhs, self.z() / rhs)
     }
 }
 
@@ -278,5 +285,13 @@ mod tests {
         let expected = Vec3::new(v[0] * scalar, v[1] * scalar, v[2] * scalar);
         assert_eq_vec3s(v * scalar, expected);
         assert_eq_vec3s(scalar * v, expected);
+    }
+
+    #[test]
+    fn div_scalar_operator() {
+        let v = Vec3::new(1.1, 2.33, 3.89);
+        let scalar = 0.49;
+        let expected = Vec3::new(v[0] / scalar, v[1] / scalar, v[2] / scalar);
+        assert_eq_vec3s(v / scalar, expected);
     }
 }
