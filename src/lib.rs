@@ -75,6 +75,14 @@ impl DivAssign<f64> for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use approx::assert_relative_eq;
+
+    fn assert_eq_vec3s(v1: Vec3, v2: Vec3) {
+        assert_relative_eq!(v1.v[0], v2.v[0]);
+        assert_relative_eq!(v1.v[1], v2.v[1]);
+        assert_relative_eq!(v1.v[2], v2.v[2]);
+    }
+
     #[test]
     fn default_constructor() {
         let vec = Vec3::zero();
@@ -89,10 +97,9 @@ mod tests {
 
     #[test]
     fn neg_operator() {
-        let vec = Vec3::new(1.0, 2.0, 3.0);
-        let vec_arr = (-vec).v;
-        let expected_arr = [-1.0, -2.0, -3.0];
-        assert_eq!(vec_arr, expected_arr);
+        let vec = -(Vec3::new(1.0, 2.0, 3.0));
+        let expected = Vec3::new(-1.0, -2.0, -3.0);
+        assert_eq_vec3s(vec, expected);
     }
 
     #[test]
@@ -111,9 +118,9 @@ mod tests {
     #[test]
     fn index_mut_operator() {
         let mut vec = Vec3::new(1.0, 2.0, 3.0);
-        let expected_arr = [-1.0, -2.0, -3.0];
-        vec[0] = expected_arr[0];
-        assert_eq!(vec[0], expected_arr[0]);
+        let expected = Vec3::new(-1.0, -2.0, -3.0);
+        vec[0] = expected[0];
+        assert_relative_eq!(vec[0], expected[0]);
     }
 
     #[test]
@@ -127,26 +134,26 @@ mod tests {
     fn add_assign_operator() {
         let mut vec1 = Vec3::new(1.0, 2.0, 3.0);
         let vec2 = Vec3::new(-1.0, 2.5, 3.6);
-        let expected_arr = [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
+        let expected = Vec3::new(vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]);
         vec1 += vec2;
-        assert_eq!(vec1.v, expected_arr);
+        assert_eq_vec3s(vec1, expected);
     }
 
     #[test]
     fn mul_assign_operator() {
         let mut vec = Vec3::new(1.0, 2.0, 3.0);
         let scalar = 5.0;
-        let expected_arr = [vec[0] * scalar, vec[1] * scalar, vec[2] * scalar];
+        let expected = Vec3::new(vec[0] * scalar, vec[1] * scalar, vec[2] * scalar);
         vec *= scalar;
-        assert_eq!(vec.v, expected_arr);
+        assert_eq_vec3s(vec, expected);
     }
 
     #[test]
     fn div_assign_operator() {
         let mut vec = Vec3::new(1.0, 2.0, 3.0);
         let scalar = 5.0;
-        let expected_arr = [vec[0] / scalar, vec[1] / scalar, vec[2] / scalar];
+        let expected = Vec3::new(vec[0] / scalar, vec[1] / scalar, vec[2] / scalar);
         vec /= scalar;
-        assert_eq!(vec.v, expected_arr);
+        assert_eq_vec3s(vec, expected);
     }
 }

@@ -9,3 +9,6 @@ name = "mylib"
 path = "src/lib.rs"
 
 [dependencies]
+
+[dev-dependencies]
+approx = "0.5.0"
