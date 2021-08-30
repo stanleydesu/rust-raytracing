@@ -1,4 +1,7 @@
-use std::ops::{AddAssign, DivAssign, Index, IndexMut, MulAssign, Neg};
+use std::{
+    fmt,
+    ops::{AddAssign, DivAssign, Index, IndexMut, MulAssign, Neg},
+};
 
 #[derive(Copy, Clone)]
 pub struct Vec3 {
@@ -77,6 +80,14 @@ impl MulAssign<f64> for Vec3 {
 impl DivAssign<f64> for Vec3 {
     fn div_assign(&mut self, rhs: f64) {
         *self *= 1_f64 / rhs
+    }
+}
+
+// utility functions
+
+impl fmt::Display for Vec3 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {} {}", self.x(), self.y(), self.z())
     }
 }
 
@@ -186,5 +197,12 @@ mod tests {
         let v = Vec3::new(1.0, 2.0, 3.0);
         let expected = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
         assert_relative_eq!(v.length(), expected);
+    }
+
+    #[test]
+    fn display() {
+        let v = Vec3::new(1.1, 2.29, 4.2);
+        let expected = "1.1 2.29 4.2";
+        assert_eq!(format!("{}", v), expected);
     }
 }
