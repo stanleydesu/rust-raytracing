@@ -1,3 +1,4 @@
+use raytracing::Vec3;
 fn main() {
     let image_width = 256;
     let image_height = 256;
@@ -16,10 +17,12 @@ fn main() {
             // greenness decreases from top to bottom (0.99... to 0)
             let g_scale = y as f64 / image_height as f64;
             let b_scale = 0.5_f64;
-            let r_intensity = (r_scale * color_max as f64) as u8;
-            let g_intensity = (g_scale * color_max as f64) as u8;
-            let b_intensity = (b_scale * color_max as f64) as u8;
-            println!("{} {} {}", r_intensity, b_intensity, g_intensity);
+            let color_vec = Vec3::new(
+                r_scale * color_max as f64,
+                g_scale * color_max as f64,
+                b_scale * color_max as f64,
+            );
+            println!("{}", color_vec);
         }
     }
 }
