@@ -1,6 +1,6 @@
 use std::{
     fmt,
-    ops::{AddAssign, DivAssign, Index, IndexMut, MulAssign, Neg},
+    ops::{Add, AddAssign, DivAssign, Index, IndexMut, MulAssign, Neg},
 };
 
 #[derive(Copy, Clone)]
@@ -65,9 +65,7 @@ impl IndexMut<usize> for Vec3 {
 
 impl AddAssign for Vec3 {
     fn add_assign(&mut self, rhs: Vec3) {
-        self.v[0] += rhs.v[0];
-        self.v[1] += rhs.v[1];
-        self.v[2] += rhs.v[2];
+        *self = *self + rhs;
     }
 }
 
@@ -88,6 +86,20 @@ impl DivAssign<f64> for Vec3 {
 impl fmt::Display for Vec3 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{} {} {}", self.x(), self.y(), self.z())
+    }
+}
+
+impl Add for Vec3 {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            v: [
+                self.x() + other.x(),
+                self.y() + other.y(),
+                self.z() + other.z(),
+            ],
+        }
     }
 }
 
@@ -204,5 +216,12 @@ mod tests {
         let v = Vec3::new(1.1, 2.29, 4.2);
         let expected = "1.1 2.29 4.2";
         assert_eq!(format!("{}", v), expected);
+    }
+    #[test]
+    fn add_operator() {
+        let v1 = Vec3::new(1.0, 2.0, 3.0);
+        let v2 = Vec3::new(-1.0, 2.5, 3.6);
+        let expected = Vec3::new(v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]);
+        assert_eq_vec3s(v1 + v2, expected);
     }
 }
