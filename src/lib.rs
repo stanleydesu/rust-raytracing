@@ -42,6 +42,14 @@ impl Vec3 {
     pub fn dot(lhs: Vec3, rhs: Vec3) -> f64 {
         lhs.x() * rhs.x() + lhs.y() * rhs.y() + lhs.z() * rhs.z()
     }
+
+    pub fn cross(lhs: Vec3, rhs: Vec3) -> Vec3 {
+        Vec3::new(
+            lhs.y() * rhs.z() - lhs.z() * rhs.y(),
+            lhs.z() * rhs.x() - lhs.x() * rhs.z(),
+            lhs.x() * rhs.y() - lhs.y() * rhs.x(),
+        )
+    }
 }
 
 impl Neg for Vec3 {
@@ -292,5 +300,17 @@ mod tests {
         let v2 = Vec3::new(-1.19, 2.66, 3.77);
         let expected = v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
         assert_eq!(Vec3::dot(v1, v2), expected);
+    }
+
+    #[test]
+    fn cross() {
+        let v1 = Vec3::new(1.1, 2.33, 3.89);
+        let v2 = Vec3::new(-1.19, 2.66, 3.77);
+        let expected = Vec3::new(
+            v1[1] * v2[2] - v1[2] * v2[1],
+            v1[2] * v2[0] - v1[0] * v2[2],
+            v1[0] * v2[1] - v1[1] * v2[0],
+        );
+        assert_eq_vec3s(Vec3::cross(v1, v2), expected);
     }
 }
