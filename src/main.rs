@@ -16,11 +16,11 @@ fn main() {
             let r_scale = x as f64 / image_width as f64;
             // greenness decreases from top to bottom (0.99... to 0)
             let g_scale = y as f64 / image_height as f64;
-            let b_scale = 0.5_f64;
+            let b_scale = 0.7_f64;
             let color_vec = Vec3::new(
-                r_scale * color_max as f64,
-                g_scale * color_max as f64,
-                b_scale * color_max as f64,
+                ((r_scale * color_max as f64) as usize) as f64,
+                ((g_scale * color_max as f64) as usize) as f64,
+                ((b_scale * color_max as f64) as usize) as f64,
             );
             println!("{}", color_vec);
         }
