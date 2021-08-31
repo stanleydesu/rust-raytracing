@@ -1,4 +1,4 @@
-use raytracing::Vec3;
+use raytracing::{write_color, Vec3};
 fn main() {
     let image_width = 256;
     let image_height = 256;
