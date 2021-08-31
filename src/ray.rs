@@ -10,6 +10,18 @@ impl Ray {
     pub fn new(origin: Point3, direction: Vec3) -> Self {
         Self { origin, direction }
     }
+
+    pub fn origin(&self) -> Point3 {
+        self.origin
+    }
+
+    pub fn direction(&self) -> Vec3 {
+        self.direction
+    }
+
+    pub fn at(&self, t: f64) -> Point3 {
+        self.origin + t * self.direction
+    }
 }
 
 #[cfg(test)]
@@ -30,5 +42,23 @@ mod tests {
         let ray = Ray::new(v1, v2);
         assert_eq_vec3s(ray.origin, v1);
         assert_eq_vec3s(ray.direction, v2);
+    }
+
+    #[test]
+    fn getters() {
+        let v1 = Vec3::new(1.1, 2.33, 3.89);
+        let v2 = Vec3::new(-1.19, 2.66, 3.77);
+        let ray = Ray::new(v1, v2);
+        assert_eq_vec3s(ray.origin(), v1);
+        assert_eq_vec3s(ray.direction(), v2);
+    }
+
+    #[test]
+    fn at() {
+        let v1 = Vec3::new(1.1, 2.33, 3.89);
+        let v2 = Vec3::new(-1.19, 2.66, 3.77);
+        let ray = Ray::new(v1, v2);
+        let t = 7.173_f64;
+        assert_eq_vec3s(ray.at(t), ray.origin + t * ray.direction());
     }
 }
