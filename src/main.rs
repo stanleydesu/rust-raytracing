@@ -13,16 +13,13 @@ fn main() {
         eprintln!("Scanlines remaining: {}", y + 1);
         for x in 0..image_width {
             // redness increases from left to right (0 to 0.99...)
-            let r_scale = x as f64 / image_width as f64;
             // greenness decreases from top to bottom (0.99... to 0)
-            let g_scale = y as f64 / image_height as f64;
-            let b_scale = 0.7_f64;
-            let color_vec = Vec3::new(
-                ((r_scale * color_max as f64) as usize) as f64,
-                ((g_scale * color_max as f64) as usize) as f64,
-                ((b_scale * color_max as f64) as usize) as f64,
+            let pixel_vec = Vec3::new(
+                x as f64 / image_width as f64,
+                y as f64 / image_height as f64,
+                0.7_f64,
             );
-            println!("{}", color_vec);
+            write_color(pixel_vec);
         }
     }
 }
