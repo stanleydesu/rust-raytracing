@@ -9,14 +9,14 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
-    pub fn new(first: f64, second: f64, third: f64) -> Vec3 {
-        Vec3 {
+    pub fn new(first: f64, second: f64, third: f64) -> Self {
+        Self {
             v: [first, second, third],
         }
     }
 
-    pub fn zero() -> Vec3 {
-        Vec3::new(0.0, 0.0, 0.0)
+    pub fn zero() -> Self {
+        Self::new(0.0, 0.0, 0.0)
     }
 
     pub fn x(&self) -> f64 {
@@ -39,19 +39,19 @@ impl Vec3 {
         self.v.iter().fold(0_f64, |total, &d| total + (d * d))
     }
 
-    pub fn dot(lhs: Vec3, rhs: Vec3) -> f64 {
+    pub fn dot(lhs: Self, rhs: Self) -> f64 {
         lhs.x() * rhs.x() + lhs.y() * rhs.y() + lhs.z() * rhs.z()
     }
 
-    pub fn cross(lhs: Vec3, rhs: Vec3) -> Vec3 {
-        Vec3::new(
+    pub fn cross(lhs: Self, rhs: Self) -> Self {
+        Self::new(
             lhs.y() * rhs.z() - lhs.z() * rhs.y(),
             lhs.z() * rhs.x() - lhs.x() * rhs.z(),
             lhs.x() * rhs.y() - lhs.y() * rhs.x(),
         )
     }
 
-    pub fn unit(vec: Vec3) -> Vec3 {
+    pub fn unit(vec: Self) -> Self {
         vec / vec.length()
     }
 }
@@ -59,7 +59,7 @@ impl Vec3 {
 impl Neg for Vec3 {
     type Output = Self;
     fn neg(self) -> Self::Output {
-        Vec3::new(-self.x(), -self.y(), -self.z())
+        Self::new(-self.x(), -self.y(), -self.z())
     }
 }
 
@@ -77,7 +77,7 @@ impl IndexMut<usize> for Vec3 {
 }
 
 impl AddAssign for Vec3 {
-    fn add_assign(&mut self, rhs: Vec3) {
+    fn add_assign(&mut self, rhs: Self) {
         *self = *self + rhs;
     }
 }
@@ -103,7 +103,7 @@ impl fmt::Display for Vec3 {
 impl Add for Vec3 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self {
-        Vec3::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
+        Self::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
     }
 }
 
@@ -114,17 +114,17 @@ impl Sub for Vec3 {
     }
 }
 
-impl Mul<Vec3> for Vec3 {
+impl Mul<Self> for Vec3 {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self {
-        Vec3::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
+        Self::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
     }
 }
 
 impl Mul<f64> for Vec3 {
     type Output = Self;
     fn mul(self, rhs: f64) -> Self {
-        Vec3::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
+        Self::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
     }
 }
 
