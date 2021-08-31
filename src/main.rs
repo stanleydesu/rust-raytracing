@@ -1,4 +1,4 @@
-use raytracing::{write_color, Vec3};
+use raytracing::{write_color, Color};
 fn main() {
     let image_width = 256;
     let image_height = 256;
@@ -14,7 +14,7 @@ fn main() {
         for x in 0..image_width {
             // redness increases from left to right (0 to 0.99...)
             // greenness decreases from top to bottom (0.99... to 0)
-            let pixel_vec = Vec3::new(
+            let pixel_vec = Color::new(
                 x as f64 / image_width as f64,
                 y as f64 / image_height as f64,
                 0.7_f64,
