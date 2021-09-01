@@ -3,7 +3,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub},
 };
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Vec3 {
     v: [f64; 3],
 }
@@ -145,12 +145,45 @@ impl Div<f64> for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::assert_relative_eq;
+    use approx::{assert_relative_eq, relative_eq};
+    use proptest::num::f64::NORMAL as n_f64;
+    use proptest::num::f64::ZERO as z_f64;
+    use proptest::prelude::*;
 
     fn assert_eq_vec3s(v1: Vec3, v2: Vec3) {
         assert_relative_eq!(v1.v[0], v2.v[0]);
         assert_relative_eq!(v1.v[1], v2.v[1]);
         assert_relative_eq!(v1.v[2], v2.v[2]);
+    }
+
+    fn relative_eq_vec3s(v1: Vec3, v2: Vec3) -> bool {
+        relative_eq!(v1.x(), v2.x()) && relative_eq!(v1.y(), v2.y()) && relative_eq!(v1.z(), v2.z())
+    }
+
+    fn arbitrary_vec3() -> impl Strategy<Value = Vec3> {
+        (n_f64, n_f64, n_f64).prop_map(|(x, y, z)| Vec3::new(x, y, z))
+    }
+
+    proptest! {
+        #[test]
+        fn prop_construct(x in n_f64, y in n_f64, z in n_f64) {
+            let v = Vec3::new(x, y, z);
+            prop_assert!(v.v == [x, y, z]);
+        }
+
+        #[test]
+        fn prop_construct_zero(x in z_f64, y in z_f64, z in z_f64) {
+            let v = Vec3::zero();
+            prop_assert!(v.v == [x, y, z]);
+        }
+
+        #[test]
+        fn prop_xyz_accessors(x: f64, y: f64, z: f64) {
+            let v = Vec3::new(x, y, z);
+            prop_assert!(v.x() == x);
+            prop_assert!(v.y() == y);
+            prop_assert!(v.z() == z);
+        }
     }
 
     #[test]
