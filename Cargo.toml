@@ -12,6 +12,4 @@ path = "src/lib.rs"
 
 [dev-dependencies]
 approx = "0.5.0"
-quickcheck = "1"
-quickcheck_macros = "1"
 proptest = "1.0.0"

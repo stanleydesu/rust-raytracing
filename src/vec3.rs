@@ -146,8 +146,6 @@ impl Div<f64> for Vec3 {
 mod tests {
     use super::*;
     use approx::{assert_relative_eq, relative_eq};
-    use proptest::num::f64::NORMAL as n_f64;
-    use proptest::num::f64::ZERO as z_f64;
     use proptest::prelude::*;
 
     fn assert_eq_vec3s(v1: Vec3, v2: Vec3) {
@@ -160,19 +158,24 @@ mod tests {
         relative_eq!(v1.x(), v2.x()) && relative_eq!(v1.y(), v2.y()) && relative_eq!(v1.z(), v2.z())
     }
 
+    // strategy for normal non-NaN floats
+    fn nf64() -> impl Strategy<Value = f64> {
+        -10.0..10.0
+    }
+
     fn arbitrary_vec3() -> impl Strategy<Value = Vec3> {
-        (n_f64, n_f64, n_f64).prop_map(|(x, y, z)| Vec3::new(x, y, z))
+        (nf64(), nf64(), nf64()).prop_map(|(x, y, z)| Vec3::new(x, y, z))
     }
 
     proptest! {
         #[test]
-        fn prop_construct(x in n_f64, y in n_f64, z in n_f64) {
+        fn prop_construct(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!(v.v == [x, y, z]);
         }
 
         #[test]
-        fn prop_construct_zero(x in z_f64, y in z_f64, z in z_f64) {
+        fn prop_construct_zero(x in 0.0..=0.0, y in 0.0..=0.0, z in 0.0..=0.0) {
             let v = Vec3::zero();
             prop_assert!(v.v == [x, y, z]);
         }
@@ -185,7 +188,6 @@ mod tests {
             prop_assert!(v.z() == z);
         }
     }
-
     #[test]
     fn default_constructor() {
         let v = Vec3::zero();
