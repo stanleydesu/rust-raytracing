@@ -145,33 +145,9 @@ impl Div<f64> for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::*;
     use proptest::prelude::*;
 
-    // some epsilon convenient for testing...
-    // approx's relative/absolute didn't work that well
-    fn assert_f64_eq(a: f64, b: f64) {
-        assert_relative_eq!(a, b, epsilon = 0.000000001);
-    }
-
-    fn assert_eq_vec3s(v1: Vec3, v2: Vec3) {
-        assert_f64_eq(v1.v[0], v2.v[0]);
-        assert_f64_eq(v1.v[1], v2.v[1]);
-        assert_f64_eq(v1.v[2], v2.v[2]);
-    }
-
-    prop_compose! {
-        // strategy for normal non-NaN floats
-        fn nf64()(float in -100.0..100.0) -> f64 {
-            float
-        }
-    }
-
-    prop_compose! {
-        fn arb_vec3()(x in nf64(), y in nf64(), z in nf64()) -> Vec3 {
-            Vec3::new(x, y, z)
-        }
-    }
+    use crate::test_util::*;
 
     // prop_assert is used when the floats involved aren't affected by certain
     // calculations and can thus be exactly compared (stricter testing).
