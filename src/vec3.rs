@@ -225,25 +225,18 @@ mod tests {
         }
 
         #[test]
-        fn add_assign_commutative(v1 in arb_vec3(), v2 in arb_vec3()) {
-            let mut v1_copy = v1;
-            let mut v2_copy = v2;
-            v1_copy += v2;
-            v2_copy += v1;
-            prop_assert!(v1_copy.v == v2_copy.v);
+        fn add_op_commutative(v1 in arb_vec3(), v2 in arb_vec3()) {
+            prop_assert!((v1 + v2).v == (v2 + v1).v);
         }
 
         #[test]
-        fn add_assign_identity(mut v1 in arb_vec3()) {
-            let v1_copy = v1;
-            v1 += Vec3::zero();
-            prop_assert!(v1_copy.v == v1.v);
+        fn add_op_identity(v1 in arb_vec3()) {
+            prop_assert!((v1 + Vec3::zero()).v == v1.v);
         }
 
         #[test]
-        fn add_assign_adds(v1 in arb_vec3(), v2 in arb_vec3()) {
-            let mut sum = v1;
-            sum += v2;
+        fn add_op_ads(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let sum = v1 + v2;
             prop_assert!(sum.v == [v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z()]);
         }
 
