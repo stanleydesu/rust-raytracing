@@ -147,7 +147,6 @@ mod tests {
     use super::*;
     use approx::*;
     use proptest::prelude::*;
-    use std::panic;
 
     // some epsilon convenient for testing...
     // approx's relative/absolute didn't work that well
@@ -161,13 +160,17 @@ mod tests {
         assert_f64_eq(v1.v[2], v2.v[2]);
     }
 
-    // strategy for normal non-NaN floats within a suitable testing range
-    fn nf64() -> impl Strategy<Value = f64> {
-        -100.0..100.0
+    prop_compose! {
+        // strategy for normal non-NaN floats
+        fn nf64()(float in -100.0..100.0) -> f64 {
+            float
+        }
     }
 
-    fn arb_vec3() -> impl Strategy<Value = Vec3> {
-        (nf64(), nf64(), nf64()).prop_map(|(x, y, z)| Vec3::new(x, y, z))
+    prop_compose! {
+        fn arb_vec3()(x in nf64(), y in nf64(), z in nf64()) -> Vec3 {
+            Vec3::new(x, y, z)
+        }
     }
 
     // prop_assert is used when the floats involved aren't affected by certain
