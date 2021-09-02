@@ -149,15 +149,21 @@ mod tests {
     use proptest::prelude::*;
     use std::panic;
 
+    // some epsilon convenient for testing...
+    // approx's relative/absolute didn't work that well
+    fn assert_f64_eq(a: f64, b: f64) {
+        assert_relative_eq!(a, b, epsilon = 0.000000001);
+    }
+
     fn assert_eq_vec3s(v1: Vec3, v2: Vec3) {
-        assert_relative_eq!(v1.v[0], v2.v[0]);
-        assert_relative_eq!(v1.v[1], v2.v[1]);
-        assert_relative_eq!(v1.v[2], v2.v[2]);
+        assert_f64_eq(v1.v[0], v2.v[0]);
+        assert_f64_eq(v1.v[1], v2.v[1]);
+        assert_f64_eq(v1.v[2], v2.v[2]);
     }
 
     // strategy for normal non-NaN floats within a suitable testing range
     fn nf64() -> impl Strategy<Value = f64> {
-        -1.0..1.0
+        -100.0..100.0
     }
 
     fn arb_vec3() -> impl Strategy<Value = Vec3> {
@@ -190,13 +196,13 @@ mod tests {
         #[test]
         fn neg_op_idempotent(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
-            prop_assert!((-(-v)).v == [x, y, z])
+            prop_assert!((-(-v)).v == [x, y, z]);
         }
 
         #[test]
         fn neg_op_negates_vec(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
-            prop_assert!((-v).v == [-x, -y, -z])
+            prop_assert!((-v).v == [-x, -y, -z]);
         }
 
         #[test]
@@ -297,69 +303,64 @@ mod tests {
         }
 
         #[test]
-        fn mul_scalar_associative(v1 in arb_vec3(), scalar in nf64(), v3 in arb_vec3()) {
-            assert_eq_vec3s((v1 * scalar) * v3, v1 * (scalar * v3));
+        fn mul_scalar_associative(v1 in arb_vec3(), scalar in nf64(), v2 in arb_vec3()) {
+            assert_eq_vec3s((v1 * scalar) * v2, v1 * (scalar * v2));
         }
 
         #[test]
         fn mul_scalar_correct(v1 in arb_vec3(), scalar in nf64()) {
-            let expected = Vec3::new(v1[0] * scalar, v1[1] * scalar, v1[2] * scalar);
+            let expected = Vec3::new(v1.x() * scalar, v1.y() * scalar, v1.z() * scalar);
             assert_eq_vec3s(v1 * scalar, expected);
+            println!("{} {}", v1, scalar);
         }
-    }
 
-    #[test]
-    fn length_squared() {
-        let v = Vec3::new(1.1, 2.33, 3.89);
-        let expected = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-        assert_relative_eq!(v.length_squared(), expected);
-    }
+        #[test]
+        fn div_scalar_identity(v1 in arb_vec3()) {
+            prop_assert!((v1 / 1.0).v == v1.v);
+        }
 
-    #[test]
-    fn length() {
-        let v = Vec3::new(1.1, 2.33, 3.89);
-        let expected = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
-        assert_relative_eq!(v.length(), expected);
-    }
+        #[test]
+        fn div_scalar_correct(v1 in arb_vec3(), scalar in nf64()) {
+            let expected = Vec3::new(v1.x() / scalar, v1.y() / scalar, v1.z() / scalar);
+            assert_eq_vec3s(v1 / scalar, expected);
+        }
 
-    #[test]
-    fn display() {
-        let v = Vec3::new(1.1, 2.29, 4.2);
-        let expected = "1.1 2.29 4.2";
-        assert_eq!(format!("{}", v), expected);
-    }
+        #[test]
+        fn length_squared_correct(v1 in arb_vec3()) {
+            let expected = v1.x() * v1.x() + v1.y() * v1.y() + v1.z() * v1.z();
+            assert_f64_eq(v1.length_squared(), expected);
+        }
 
-    #[test]
-    fn div_scalar_operator() {
-        let v = Vec3::new(1.1, 2.33, 3.89);
-        let scalar = 0.49;
-        let expected = Vec3::new(v[0] / scalar, v[1] / scalar, v[2] / scalar);
-        assert_eq_vec3s(v / scalar, expected);
-    }
+        #[test]
+        fn length_correct(v1 in arb_vec3()) {
+            let expected = (v1.x() * v1.x() + v1.y() * v1.y() + v1.z() * v1.z()).sqrt();
+            assert_f64_eq(v1.length(), expected);
+        }
+        #[test]
+        fn display_correct(v1 in arb_vec3()) {
+            let expected = format!("{} {} {}", v1.x(), v1.y(), v1.z());
+            assert_eq!(format!("{}", v1), expected);
+        }
 
-    #[test]
-    fn dot_product() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let expected = v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
-        assert_eq!(Vec3::dot(v1, v2), expected);
-    }
+        #[test]
+        fn dot_product_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let expected = v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
+            assert_eq!(Vec3::dot(v1, v2), expected);
+        }
 
-    #[test]
-    fn cross_product() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let expected = Vec3::new(
-            v1[1] * v2[2] - v1[2] * v2[1],
-            v1[2] * v2[0] - v1[0] * v2[2],
-            v1[0] * v2[1] - v1[1] * v2[0],
-        );
-        assert_eq_vec3s(Vec3::cross(v1, v2), expected);
-    }
+        #[test]
+        fn cross_product(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let expected = Vec3::new(
+                v1.y() * v2.z() - v1.z() * v2.y(),
+                v1.z() * v2.x() - v1.x() * v2.z(),
+                v1.x() * v2.y() - v1.y() * v2.x(),
+            );
+            assert_eq_vec3s(Vec3::cross(v1, v2), expected);
+        }
 
-    #[test]
-    fn unit_vector() {
-        let v = Vec3::new(1.1, 2.33, 3.89);
-        assert_relative_eq!(Vec3::unit(v).length(), 1_f64);
+        #[test]
+        fn unit_vector(v1 in arb_vec3()) {
+            assert_f64_eq(Vec3::unit(v1).length(), 1.0);
+        }
     }
 }
