@@ -169,57 +169,55 @@ mod tests {
 
     proptest! {
         #[test]
-        fn prop_construct(x in nf64(), y in nf64(), z in nf64()) {
+        fn new_creates_vec_using_parameters(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!(v.v == [x, y, z]);
         }
 
         #[test]
-        fn prop_construct_zero(x in 0.0..=0.0, y in 0.0..=0.0, z in 0.0..=0.0) {
+        fn zero_creates_zero_vector(x in 0.0..=0.0, y in 0.0..=0.0, z in 0.0..=0.0) {
             let v = Vec3::zero();
             prop_assert!(v.v == [x, y, z]);
         }
 
         #[test]
-        fn prop_xyz_accessors(x: f64, y: f64, z: f64) {
+        fn xyz_accesses_correctly(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!(v.x() == x);
             prop_assert!(v.y() == y);
             prop_assert!(v.z() == z);
         }
-    }
-    #[test]
-    fn default_constructor() {
-        let v = Vec3::zero();
-        assert_eq!(v.v, [0.0, 0.0, 0.0]);
-    }
 
-    #[test]
-    fn new_constructor() {
-        let v = Vec3::new(1.0, 2.0, 3.0);
-        assert_eq!(v.v, [1.0, 2.0, 3.0]);
-    }
+        #[test]
+        fn neg_idempotent(x in nf64(), y in nf64(), z in nf64()) {
+            let v = Vec3::new(x, y, z);
+            prop_assert!((-(-v)).v == [x, y, z])
+        }
 
-    #[test]
-    fn xyz_accessors() {
-        let values = [1.0, 2.4, 3.9];
-        let v = Vec3::new(values[0], values[1], values[2]);
-        assert_relative_eq!(v.x(), values[0]);
-        assert_relative_eq!(v.y(), values[1]);
-        assert_relative_eq!(v.z(), values[2]);
-    }
+        #[test]
+        fn neg_negates(x in nf64(), y in nf64(), z in nf64()) {
+            let v = Vec3::new(x, y, z);
+            prop_assert!((-v).v == [-x, -y, -z])
+        }
 
-    #[test]
-    fn neg_operator() {
-        let v = -(Vec3::new(1.0042, 2.3332, 3.141242));
-        let expected = Vec3::new(-1.0042, -2.3332, -3.141242);
-        assert_eq_vec3s(v, expected);
-    }
+        #[test]
+        fn valid_index_accesses_correctly(x in nf64(), y in nf64(), z in nf64()) {
+            let v = Vec3::new(x, y, z);
+            prop_assert!(v[0] == x);
+            prop_assert!(v[1] == y);
+            prop_assert!(v[2] == z);
+        }
 
-    #[test]
-    fn index_operator() {
-        let v = Vec3::new(1.0, 2.0, 3.0);
-        assert_relative_eq!(v[0], 1.0);
+        #[test]
+        fn index_mut_operator(x in nf64(), y in nf64(), z in nf64()) {
+            let mut v = Vec3::new(x, y, z);
+            v[0] = x;
+            v[1] = y;
+            v[2] = z;
+            prop_assert!(v[0] == x);
+            prop_assert!(v[1] == y);
+            prop_assert!(v[2] == z);
+        }
     }
 
     #[test]
@@ -227,14 +225,6 @@ mod tests {
     fn index_operator_panic() {
         let v = Vec3::new(1.0, 2.0, 3.0);
         v[3];
-    }
-
-    #[test]
-    fn index_mut_operator() {
-        let mut v = Vec3::new(1.0, 2.0, 3.0);
-        let expected = Vec3::new(-1.0, -2.0, -3.0);
-        v[0] = expected[0];
-        assert_relative_eq!(v[0], expected[0]);
     }
 
     #[test]
