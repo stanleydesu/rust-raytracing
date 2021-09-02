@@ -311,7 +311,6 @@ mod tests {
         fn mul_scalar_correct(v1 in arb_vec3(), scalar in nf64()) {
             let expected = Vec3::new(v1.x() * scalar, v1.y() * scalar, v1.z() * scalar);
             assert_eq_vec3s(v1 * scalar, expected);
-            println!("{} {}", v1, scalar);
         }
 
         #[test]
@@ -343,13 +342,18 @@ mod tests {
         }
 
         #[test]
+        fn dot_product_commutative(v1 in arb_vec3(), v2 in arb_vec3()) {
+            assert_eq!(Vec3::dot(v1, v2), Vec3::dot(v2, v1));
+        }
+
+        #[test]
         fn dot_product_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
             let expected = v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
             assert_eq!(Vec3::dot(v1, v2), expected);
         }
 
         #[test]
-        fn cross_product(v1 in arb_vec3(), v2 in arb_vec3()) {
+        fn cross_product_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
             let expected = Vec3::new(
                 v1.y() * v2.z() - v1.z() * v2.y(),
                 v1.z() * v2.x() - v1.x() * v2.z(),
@@ -359,7 +363,7 @@ mod tests {
         }
 
         #[test]
-        fn unit_vector(v1 in arb_vec3()) {
+        fn unit_vector_has_length_one(v1 in arb_vec3()) {
             assert_f64_eq(Vec3::unit(v1).length(), 1.0);
         }
     }
