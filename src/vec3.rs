@@ -147,6 +147,7 @@ mod tests {
     use super::*;
     use approx::{assert_relative_eq, relative_eq};
     use proptest::prelude::*;
+    use std::panic;
 
     fn assert_eq_vec3s(v1: Vec3, v2: Vec3) {
         assert_relative_eq!(v1.v[0], v2.v[0]);
@@ -169,7 +170,7 @@ mod tests {
 
     proptest! {
         #[test]
-        fn new_creates_vec_using_parameters(x in nf64(), y in nf64(), z in nf64()) {
+        fn new_constructs_with_parameters(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!(v.v == [x, y, z]);
         }
@@ -181,7 +182,7 @@ mod tests {
         }
 
         #[test]
-        fn xyz_accesses_correctly(x in nf64(), y in nf64(), z in nf64()) {
+        fn xyz_accesses_vec(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!(v.x() == x);
             prop_assert!(v.y() == y);
@@ -189,19 +190,19 @@ mod tests {
         }
 
         #[test]
-        fn neg_idempotent(x in nf64(), y in nf64(), z in nf64()) {
+        fn neg_op_idempotent(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!((-(-v)).v == [x, y, z])
         }
 
         #[test]
-        fn neg_negates(x in nf64(), y in nf64(), z in nf64()) {
+        fn neg_op_negates_vec(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!((-v).v == [-x, -y, -z])
         }
 
         #[test]
-        fn valid_index_accesses_correctly(x in nf64(), y in nf64(), z in nf64()) {
+        fn valid_subscript_indexes_vec(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
             prop_assert!(v[0] == x);
             prop_assert!(v[1] == y);
@@ -209,8 +210,15 @@ mod tests {
         }
 
         #[test]
-        fn index_mut_operator(x in nf64(), y in nf64(), z in nf64()) {
-            let mut v = Vec3::new(x, y, z);
+        #[should_panic]
+        fn invalid_subscript_panics(i in 3..100usize) {
+            let v = Vec3::zero();
+            v[i];
+        }
+
+        #[test]
+        fn valid_mut_subscript_mutates_vec(x in nf64(), y in nf64(), z in nf64()) {
+            let mut v = Vec3::zero();
             v[0] = x;
             v[1] = y;
             v[2] = z;
@@ -218,20 +226,13 @@ mod tests {
             prop_assert!(v[1] == y);
             prop_assert!(v[2] == z);
         }
-    }
 
-    #[test]
-    #[should_panic]
-    fn index_operator_panic() {
-        let v = Vec3::new(1.0, 2.0, 3.0);
-        v[3];
-    }
-
-    #[test]
-    #[should_panic]
-    fn index_mut_operator_panic() {
-        let mut v = Vec3::new(1.0, 2.0, 3.0);
-        v[3] = 42.0;
+        #[test]
+        #[should_panic]
+        fn invalid_mut_index_panics(i in 3..100usize) {
+            let mut v = Vec3::zero();
+            v[i] = 0.0;
+        }
     }
 
     #[test]
