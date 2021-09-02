@@ -290,6 +290,11 @@ mod tests {
         }
 
         #[test]
+        fn mul_vec3s_distributive(v1 in arb_vec3(), v2 in arb_vec3(), v3 in arb_vec3()) {
+            assert_eq_vec3s(v1 * (v2 + v3), (v1 * v2) + (v1 * v3));
+        }
+
+        #[test]
         fn mul_vec3s_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
             let expected = Vec3::new(v1.x() * v2.x(), v1.y() * v2.y(), v1.z() * v2.z());
             assert_eq_vec3s(v1 * v2, expected);
