@@ -235,33 +235,26 @@ mod tests {
         }
 
         #[test]
-        fn add_op_ads(v1 in arb_vec3(), v2 in arb_vec3()) {
-            let sum = v1 + v2;
-            prop_assert!(sum.v == [v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z()]);
+        fn add_op_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let result = v1 + v2;
+            prop_assert!(result.v == [v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z()]);
         }
 
         #[test]
-        fn add_associative(v1 in arb_vec3(), v2 in arb_vec3(), v3 in arb_vec3()) {
+        fn sub_op_identity(v1 in arb_vec3()) {
+            prop_assert!((v1 - Vec3::zero()).v == v1.v);
+        }
+
+        #[test]
+        fn sub_op_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let result = v1 - v2;
+            prop_assert!(result.v == [v1.x() - v2.x(), v1.y() - v2.y(), v1.z() - v2.z()]);
+        }
+
+        #[test]
+        fn sub_associative(v1 in arb_vec3(), v2 in arb_vec3(), v3 in arb_vec3()) {
             assert_eq_vec3s((v1 + v2) + v3, v1 + (v2 + v3));
         }
-    }
-
-    #[test]
-    fn mul_assign_operator() {
-        let mut v = Vec3::new(1.0, 2.0, 3.0);
-        let scalar = 42.3116;
-        let expected = Vec3::new(v[0] * scalar, v[1] * scalar, v[2] * scalar);
-        v *= scalar;
-        assert_eq_vec3s(v, expected);
-    }
-
-    #[test]
-    fn div_assign_operator() {
-        let mut v = Vec3::new(1.0, 2.0, 3.0);
-        let scalar = 0.91;
-        let expected = Vec3::new(v[0] / scalar, v[1] / scalar, v[2] / scalar);
-        v /= scalar;
-        assert_eq_vec3s(v, expected);
     }
 
     #[test]
@@ -283,22 +276,6 @@ mod tests {
         let v = Vec3::new(1.1, 2.29, 4.2);
         let expected = "1.1 2.29 4.2";
         assert_eq!(format!("{}", v), expected);
-    }
-
-    #[test]
-    fn add_operator() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let expected = Vec3::new(v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]);
-        assert_eq_vec3s(v1 + v2, expected);
-    }
-
-    #[test]
-    fn sub_operator() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let expected = Vec3::new(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]);
-        assert_eq_vec3s(v1 - v2, expected);
     }
 
     #[test]
