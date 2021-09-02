@@ -164,6 +164,10 @@ mod tests {
         (nf64(), nf64(), nf64()).prop_map(|(x, y, z)| Vec3::new(x, y, z))
     }
 
+    // prop_assert is used when the floats involved aren't affected by certain
+    // calculations and can thus be exactly compared (stricter testing).
+    // otherwise, assert_eq_vec3s is used to test approximate equality between
+    // Vec3s and their underlying float values
     proptest! {
         #[test]
         fn new_constructs_with_parameters(x in nf64(), y in nf64(), z in nf64()) {
@@ -235,6 +239,11 @@ mod tests {
         }
 
         #[test]
+        fn add_associative(v1 in arb_vec3(), v2 in arb_vec3(), v3 in arb_vec3()) {
+            assert_eq_vec3s((v1 + v2) + v3, v1 + (v2 + v3));
+        }
+
+        #[test]
         fn add_op_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
             let result = v1 + v2;
             prop_assert!(result.v == [v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z()]);
@@ -252,8 +261,50 @@ mod tests {
         }
 
         #[test]
-        fn sub_associative(v1 in arb_vec3(), v2 in arb_vec3(), v3 in arb_vec3()) {
-            assert_eq_vec3s((v1 + v2) + v3, v1 + (v2 + v3));
+        fn mul_vec3s_commutative(v1 in arb_vec3(), v2 in arb_vec3()) {
+            prop_assert!((v1 * v2).v == (v2 * v1).v);
+        }
+
+        #[test]
+        fn mul_vec3s_identity(v1 in arb_vec3()) {
+            prop_assert!((v1 * Vec3::new(1.0, 1.0, 1.0)).v == v1.v);
+        }
+
+        #[test]
+        fn mul_vec3s_zero(v1 in arb_vec3()) {
+            prop_assert!((v1 * Vec3::zero()).v == Vec3::zero().v);
+        }
+
+        #[test]
+        fn mul_vec3s_associative(v1 in arb_vec3(), v2 in arb_vec3(), v3 in arb_vec3()) {
+            assert_eq_vec3s((v1 * v2) * v3, v1 * (v2 * v3));
+        }
+
+        #[test]
+        fn mul_vec3s_correct(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let expected = Vec3::new(v1.x() * v2.x(), v1.y() * v2.y(), v1.z() * v2.z());
+            assert_eq_vec3s(v1 * v2, expected);
+        }
+
+        #[test]
+        fn mul_scalar_identity(v1 in arb_vec3()) {
+            prop_assert!((v1 * 1.0).v == v1.v);
+        }
+
+        #[test]
+        fn mul_scalar_zero(v1 in arb_vec3()) {
+            prop_assert!((v1 * 0.0).v == Vec3::zero().v);
+        }
+
+        #[test]
+        fn mul_scalar_associative(v1 in arb_vec3(), scalar in nf64(), v3 in arb_vec3()) {
+            assert_eq_vec3s((v1 * scalar) * v3, v1 * (scalar * v3));
+        }
+
+        #[test]
+        fn mul_scalar_correct(v1 in arb_vec3(), scalar in nf64()) {
+            let expected = Vec3::new(v1[0] * scalar, v1[1] * scalar, v1[2] * scalar);
+            assert_eq_vec3s(v1 * scalar, expected);
         }
     }
 
@@ -276,23 +327,6 @@ mod tests {
         let v = Vec3::new(1.1, 2.29, 4.2);
         let expected = "1.1 2.29 4.2";
         assert_eq!(format!("{}", v), expected);
-    }
-
-    #[test]
-    fn mul_vec3s_operator() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let expected = Vec3::new(v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2]);
-        assert_eq_vec3s(v1 * v2, expected);
-    }
-
-    #[test]
-    fn mul_scalar_operator() {
-        let v = Vec3::new(1.1, 2.33, 3.89);
-        let scalar = 0.49;
-        let expected = Vec3::new(v[0] * scalar, v[1] * scalar, v[2] * scalar);
-        assert_eq_vec3s(v * scalar, expected);
-        assert_eq_vec3s(scalar * v, expected);
     }
 
     #[test]
