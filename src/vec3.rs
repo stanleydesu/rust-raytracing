@@ -145,7 +145,7 @@ impl Div<f64> for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::{assert_relative_eq, relative_eq};
+    use approx::*;
     use proptest::prelude::*;
     use std::panic;
 
@@ -155,16 +155,12 @@ mod tests {
         assert_relative_eq!(v1.v[2], v2.v[2]);
     }
 
-    fn relative_eq_vec3s(v1: Vec3, v2: Vec3) -> bool {
-        relative_eq!(v1.x(), v2.x()) && relative_eq!(v1.y(), v2.y()) && relative_eq!(v1.z(), v2.z())
-    }
-
-    // strategy for normal non-NaN floats
+    // strategy for normal non-NaN floats within a suitable testing range
     fn nf64() -> impl Strategy<Value = f64> {
-        -10.0..10.0
+        -1.0..1.0
     }
 
-    fn arbitrary_vec3() -> impl Strategy<Value = Vec3> {
+    fn arb_vec3() -> impl Strategy<Value = Vec3> {
         (nf64(), nf64(), nf64()).prop_map(|(x, y, z)| Vec3::new(x, y, z))
     }
 
@@ -184,9 +180,7 @@ mod tests {
         #[test]
         fn xyz_accesses_vec(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
-            prop_assert!(v.x() == x);
-            prop_assert!(v.y() == y);
-            prop_assert!(v.z() == z);
+            prop_assert!([v.x(), v.y(), v.z()] == [x, y, z]);
         }
 
         #[test]
@@ -204,9 +198,7 @@ mod tests {
         #[test]
         fn valid_subscript_indexes_vec(x in nf64(), y in nf64(), z in nf64()) {
             let v = Vec3::new(x, y, z);
-            prop_assert!(v[0] == x);
-            prop_assert!(v[1] == y);
-            prop_assert!(v[2] == z);
+            prop_assert!([v[0], v[1], v[2]] == [x, y, z]);
         }
 
         #[test]
@@ -222,9 +214,7 @@ mod tests {
             v[0] = x;
             v[1] = y;
             v[2] = z;
-            prop_assert!(v[0] == x);
-            prop_assert!(v[1] == y);
-            prop_assert!(v[2] == z);
+            prop_assert!([v[0], v[1], v[2]] == [x, y, z]);
         }
 
         #[test]
@@ -233,15 +223,34 @@ mod tests {
             let mut v = Vec3::zero();
             v[i] = 0.0;
         }
-    }
 
-    #[test]
-    fn add_assign_operator() {
-        let mut v1 = Vec3::new(1.0, 2.0, 3.0);
-        let v2 = Vec3::new(-1.0, 2.5, 3.6);
-        let expected = Vec3::new(v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]);
-        v1 += v2;
-        assert_eq_vec3s(v1, expected);
+        #[test]
+        fn add_assign_commutative(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let mut v1_copy = v1;
+            let mut v2_copy = v2;
+            v1_copy += v2;
+            v2_copy += v1;
+            prop_assert!(v1_copy.v == v2_copy.v);
+        }
+
+        #[test]
+        fn add_assign_identity(mut v1 in arb_vec3()) {
+            let v1_copy = v1;
+            v1 += Vec3::zero();
+            prop_assert!(v1_copy.v == v1.v);
+        }
+
+        #[test]
+        fn add_assign_adds(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let mut sum = v1;
+            sum += v2;
+            prop_assert!(sum.v == [v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z()]);
+        }
+
+        #[test]
+        fn add_associative(v1 in arb_vec3(), v2 in arb_vec3(), v3 in arb_vec3()) {
+            assert_eq_vec3s((v1 + v2) + v3, v1 + (v2 + v3));
+        }
     }
 
     #[test]
