@@ -20,7 +20,7 @@ impl Ray {
     }
 
     pub fn at(&self, t: f64) -> Point3 {
-        self.origin + t * self.direction
+        self.origin + (t * self.direction)
     }
 }
 
@@ -52,8 +52,8 @@ mod tests {
         }
 
         #[test]
-        fn at(ray in arb_ray(), scalar in nf64()) {
-            assert_eq_vec3s(ray.at(scalar), ray.origin + scalar * ray.direction());
+        fn at(ray in arb_ray(), t in nf64()) {
+            assert_eq_vec3s(ray.at(t), ray.origin + t * ray.direction());
         }
     }
 }
