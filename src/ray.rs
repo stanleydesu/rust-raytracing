@@ -1,6 +1,6 @@
 use crate::{Point3, Vec3};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Ray {
     origin: Point3,
     direction: Vec3,
@@ -27,38 +27,33 @@ impl Ray {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::assert_relative_eq;
+    use crate::test_util::*;
+    use proptest::prelude::{prop_compose, proptest};
 
-    fn assert_eq_vec3s(v1: Vec3, v2: Vec3) {
-        assert_relative_eq!(v1.x(), v2.x());
-        assert_relative_eq!(v1.y(), v2.y());
-        assert_relative_eq!(v1.z(), v2.z());
+    prop_compose! {
+        pub fn arb_ray()(origin in arb_vec3(), direction in arb_vec3()) -> Ray {
+            Ray::new(origin, direction)
+        }
     }
 
-    #[test]
-    fn new_constructor() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let ray = Ray::new(v1, v2);
-        assert_eq_vec3s(ray.origin, v1);
-        assert_eq_vec3s(ray.direction, v2);
-    }
+    proptest! {
+        #[test]
+        fn new_constructor(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let ray = Ray::new(v1, v2);
+            assert_eq_vec3s(ray.origin, v1);
+            assert_eq_vec3s(ray.direction, v2);
+        }
 
-    #[test]
-    fn getters() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let ray = Ray::new(v1, v2);
-        assert_eq_vec3s(ray.origin(), v1);
-        assert_eq_vec3s(ray.direction(), v2);
-    }
+        #[test]
+        fn getters(v1 in arb_vec3(), v2 in arb_vec3()) {
+            let ray = Ray::new(v1, v2);
+            assert_eq_vec3s(ray.origin(), v1);
+            assert_eq_vec3s(ray.direction(), v2);
+        }
 
-    #[test]
-    fn at() {
-        let v1 = Vec3::new(1.1, 2.33, 3.89);
-        let v2 = Vec3::new(-1.19, 2.66, 3.77);
-        let ray = Ray::new(v1, v2);
-        let t = 7.173_f64;
-        assert_eq_vec3s(ray.at(t), ray.origin + t * ray.direction());
+        #[test]
+        fn at(ray in arb_ray(), scalar in nf64()) {
+            assert_eq_vec3s(ray.at(scalar), ray.origin + scalar * ray.direction());
+        }
     }
 }
