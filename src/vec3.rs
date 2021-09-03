@@ -145,9 +145,8 @@ impl Div<f64> for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use proptest::prelude::*;
-
     use crate::test_util::*;
+    use proptest::prelude::{prop_assert, proptest};
 
     // prop_assert is used when the floats involved aren't affected by certain
     // calculations and can thus be exactly compared (stricter testing).

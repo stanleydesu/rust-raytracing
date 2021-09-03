@@ -11,7 +11,7 @@ pub use color::write_color;
 pub mod test_util {
     use super::*;
     use approx::assert_relative_eq;
-    use proptest::prelude::*;
+    use proptest::prelude::prop_compose;
 
     // some epsilon convenient for testing...
     // approx's relative/absolute didn't work that well
