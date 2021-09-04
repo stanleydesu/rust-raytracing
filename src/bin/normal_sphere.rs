@@ -4,10 +4,6 @@ use raytracing::{write_color, Color, Point3, Ray, Vec3};
 // returns -1 if the ray doesn't hit the sphere,
 // else, gives a t value at which r = P(t) = A + tb hits the sphere
 fn ray_hit_sphere_value(r: &Ray, center: Point3, radius: f64) -> f64 {
-    // r = P(t) = A + tb
-    // solve t²b² + 2tb(A - C) + (A - C)² - r² = 0, for some unknown t
-    // which is a quadratic equation of the form ax^2 + bx + c = 0,
-    // where a = b², b = 2b(A - C), and c = (A - C)² - r²
     let oc = r.origin() - center; // A - C
     let a = r.direction().length_squared();
     let half_b = Vec3::dot(r.direction(), oc);
