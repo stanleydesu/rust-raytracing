@@ -3,7 +3,7 @@ use raytracing::{write_color, Color, Point3, Ray, Vec3};
 // given a ray and a sphere's center and radius,
 // returns -1 if the ray doesn't hit the sphere,
 // else, gives a t value at which r = P(t) = A + tb hits the sphere
-fn ray_hit_sphere_value(r: &Ray, center: Point3, radius: f64) -> f64 {
+fn ray_hit_sphere_value(r: Ray, center: Point3, radius: f64) -> f64 {
     let oc = r.origin() - center; // A - C
     let a = r.direction().length_squared();
     let half_b = Vec3::dot(r.direction(), oc);
@@ -20,7 +20,7 @@ fn ray_hit_sphere_value(r: &Ray, center: Point3, radius: f64) -> f64 {
     };
 }
 
-fn ray_color(r: &Ray) -> Color {
+fn ray_color(r: Ray) -> Color {
     let sphere_center = Point3::new(0.0, 0.0, -1.0);
     let sphere_radius = 0.5;
     let t = ray_hit_sphere_value(r, sphere_center, sphere_radius);
@@ -75,7 +75,7 @@ fn main() {
                 origin,
                 lower_left_corner + (horizontal * x_scale) + (vertical * y_scale),
             );
-            let pixel_color = ray_color(&r);
+            let pixel_color = ray_color(r);
             write_color(pixel_color);
         }
     }
