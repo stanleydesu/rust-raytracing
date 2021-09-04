@@ -9,18 +9,18 @@ fn ray_hit_sphere_value(r: &Ray, center: Point3, radius: f64) -> f64 {
     // which is a quadratic equation of the form ax^2 + bx + c = 0,
     // where a = b², b = 2b(A - C), and c = (A - C)² - r²
     let oc = r.origin() - center; // A - C
-    let a = Vec3::dot(r.direction(), r.direction());
-    let b = 2.0 * Vec3::dot(r.direction(), oc);
-    let c = Vec3::dot(oc, oc) - (radius * radius);
+    let a = r.direction().length_squared();
+    let half_b = Vec3::dot(r.direction(), oc);
+    let c = oc.length_squared() - (radius * radius);
     // negative discriminant if ray doesn't hit the sphere,
     // zero if it hits the sphere tangentially,
     // and positive if it passes through the sphere
-    let discriminant = (b * b) - (4.0 * a * c);
+    let discriminant = (half_b * half_b) - (a * c);
     if discriminant < 0.0 {
         return -1.0;
     } else {
         // return the smaller t value (closest hit point)
-        return (-b - discriminant.sqrt()) / (2.0 * a);
+        return (-half_b - discriminant.sqrt()) / a;
     };
 }
 
