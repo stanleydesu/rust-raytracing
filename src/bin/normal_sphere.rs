@@ -13,11 +13,11 @@ fn ray_hit_sphere_value(r: Ray, center: Point3, radius: f64) -> f64 {
     // and positive if it passes through the sphere
     let discriminant = (half_b * half_b) - (a * c);
     if discriminant < 0.0 {
-        return -1.0;
+        -1.0
     } else {
         // return the smaller t value (closest hit point)
-        return (-half_b - discriminant.sqrt()) / a;
-    };
+        (-half_b - discriminant.sqrt()) / a
+    }
 }
 
 fn ray_color(r: Ray) -> Color {
