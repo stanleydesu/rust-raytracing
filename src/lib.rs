@@ -1,5 +1,6 @@
 mod color;
 mod hittable;
+mod hittable_list;
 mod ray;
 mod sphere;
 mod vec3;
@@ -8,6 +9,7 @@ pub type Point3 = vec3::Vec3; // 3D point
 pub type Color = vec3::Vec3; // RGB color
 pub type Ray = ray::Ray;
 pub type HitRecord = hittable::HitRecord;
+pub type HittableList = hittable_list::HittableList;
 pub type Sphere = sphere::Sphere;
 pub use color::write_color;
 pub use hittable::Hittable;
