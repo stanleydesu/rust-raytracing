@@ -24,10 +24,14 @@ impl Hittable for Sphere {
             }
         }
 
-        Some(HitRecord {
+        let mut hit_rec = HitRecord {
             t: root,
             point: r.at(root),
-            normal: (r.at(root) - self.center) / self.radius,
-        })
+            normal: (r.at(root) - self.center) / self.radius, // unit surface normal
+            is_front_face: true,
+        };
+        hit_rec.set_face_normal(r, hit_rec.normal);
+
+        Some(hit_rec)
     }
 }
