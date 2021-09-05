@@ -1,3 +1,5 @@
+use rand::Rng;
+
 mod color;
 mod hittable;
 mod hittable_list;
@@ -13,6 +15,20 @@ pub type HittableList = hittable_list::HittableList;
 pub type Sphere = sphere::Sphere;
 pub use color::write_color;
 pub use hittable::Hittable;
+
+pub fn degrees_to_radians(degrees: f64) -> f64 {
+    return degrees * std::f64::consts::PI / 180.0;
+}
+
+pub fn rand_less_than_one() -> f64 {
+    rand_in_range(0.0, 1.0)
+}
+
+// returns a random real in [min, max)
+pub fn rand_in_range(min: f64, max: f64) -> f64 {
+    let mut rng = rand::thread_rng();
+    rng.gen_range(min..max)
+}
 
 #[cfg(test)]
 pub mod test_util {

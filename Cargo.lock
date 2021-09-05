@@ -181,6 +181,7 @@ version = "0.1.0"
 dependencies = [
  "approx",
  "proptest",
+ "rand",
 ]
 
 [[package]]
