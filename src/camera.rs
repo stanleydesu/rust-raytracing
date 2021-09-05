@@ -27,4 +27,15 @@ impl Camera {
             vertical,
         }
     }
+
+    // returns the ray pointing from the camera's origin to some location on
+    // the viewport corresponding to the x/y percentage offsets
+    pub fn get_ray(&self, x_percent: f64, y_percent: f64) -> Ray {
+        Ray::new(
+            self.origin,
+            self.lower_left_corner - self.origin
+                + (self.horizontal * x_percent)
+                + (self.vertical * y_percent),
+        )
+    }
 }

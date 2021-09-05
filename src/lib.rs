@@ -14,6 +14,7 @@ pub type Ray = ray::Ray;
 pub type HitRecord = hittable::HitRecord;
 pub type HittableList = hittable_list::HittableList;
 pub type Sphere = sphere::Sphere;
+pub type Camera = camera::Camera;
 pub use color::write_color;
 pub use hittable::Hittable;
 
