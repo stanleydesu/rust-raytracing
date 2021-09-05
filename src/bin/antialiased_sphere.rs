@@ -28,7 +28,7 @@ fn main() {
     let world_rc = Rc::new(world);
 
     // camera
-    let cam = Camera::new();
+    let cam = Camera::default();
 
     // PPM image format specifications
     println!("P3"); // colors are in ascii

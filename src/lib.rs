@@ -15,9 +15,7 @@ pub type HitRecord = hittable::HitRecord;
 pub type HittableList = hittable_list::HittableList;
 pub type Sphere = sphere::Sphere;
 pub type Camera = camera::Camera;
-pub use color::write_color;
-pub use color::write_sampled_color;
-
+pub use color::{write_color, write_sampled_color};
 pub use hittable::Hittable;
 
 pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
@@ -31,7 +29,7 @@ pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
 }
 
 pub fn degrees_to_radians(degrees: f64) -> f64 {
-    return degrees * std::f64::consts::PI / 180.0;
+    degrees * std::f64::consts::PI / 180.0
 }
 
 pub fn rand_f64() -> f64 {
