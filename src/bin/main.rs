@@ -19,7 +19,7 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400u32;
     let image_height = (image_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 50u32;
+    let samples_per_pixel = 100u32;
 
     // world
     let mut world = HittableList::new();
@@ -40,8 +40,8 @@ fn main() {
         for x in 0..image_width {
             let mut pixel_color = Color::zero();
             for _s in 0..samples_per_pixel {
-                let x_percent = (x as f64 + rand_f64()) / (image_width - 1) as f64;
-                let y_percent = (y as f64 + rand_f64()) / (image_height - 1) as f64;
+                let x_percent = (x as f64 + rand_f64()) / (image_width as f64);
+                let y_percent = (y as f64 + rand_f64()) / (image_height as f64);
                 let r = cam.get_ray(x_percent, y_percent);
                 pixel_color += ray_color(r, world_rc.clone());
             }
