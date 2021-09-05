@@ -28,7 +28,7 @@ fn ray_color(r: &Ray) -> Color {
     // at t = 1: output blue
     // at t = 0: output white
     // inbetween (0 < t < 1): linear blend
-    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.0, 0.0, 0.0)
+    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::zero()
 }
 
 fn main() {
