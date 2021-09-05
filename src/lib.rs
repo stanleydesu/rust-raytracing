@@ -1,5 +1,6 @@
 use rand::Rng;
 
+mod camera;
 mod color;
 mod hittable;
 mod hittable_list;
