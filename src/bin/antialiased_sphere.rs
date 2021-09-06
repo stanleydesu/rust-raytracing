@@ -3,7 +3,7 @@ use raytracing::{
 };
 use std::rc::Rc;
 
-fn ray_color(r: Ray, h: Rc<dyn Hittable>) -> Color {
+fn ray_color(r: Ray, h: &dyn Hittable) -> Color {
     if let Some(hit_record) = h.hit(r, 0.0, f64::INFINITY) {
         return 0.5 * (hit_record.normal + Color::new(1.0, 1.0, 1.0));
     }
@@ -25,7 +25,6 @@ fn main() {
     let mut world = HittableList::new();
     world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
     world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
-    let world_rc = Rc::new(world);
 
     // camera
     let cam = Camera::default();
@@ -43,7 +42,7 @@ fn main() {
                 let x_percent = (x as f64 + rand_f64()) / (image_width as f64);
                 let y_percent = (y as f64 + rand_f64()) / (image_height as f64);
                 let r = cam.get_ray(x_percent, y_percent);
-                pixel_color += ray_color(r, world_rc.clone());
+                pixel_color += ray_color(r, &world);
             }
             write_sampled_color(pixel_color, samples_per_pixel);
         }

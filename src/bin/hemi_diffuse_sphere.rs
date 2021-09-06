@@ -3,7 +3,7 @@ use raytracing::{
 };
 use std::rc::Rc;
 
-fn ray_color(r: Ray, world: Rc<dyn Hittable>, depth: i32) -> Color {
+fn ray_color(r: Ray, world: &dyn Hittable, depth: i32) -> Color {
     if depth <= 0 {
         return Color::zero(); // recursed ray didn't hit anything, so return black
     }
@@ -30,7 +30,6 @@ fn main() {
     let mut world = HittableList::new();
     world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
     world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
-    let world_rc = Rc::new(world);
 
     // camera
     let cam = Camera::default();
@@ -48,7 +47,7 @@ fn main() {
                 let x_percent = (x as f64 + rand_f64()) / (image_width as f64);
                 let y_percent = (y as f64 + rand_f64()) / (image_height as f64);
                 let r = cam.get_ray(x_percent, y_percent);
-                pixel_color += ray_color(r, world_rc.clone(), max_depth);
+                pixel_color += ray_color(r, &world, max_depth);
             }
             write_sampled_color(pixel_color, samples_per_pixel);
         }

@@ -1,7 +1,7 @@
 use raytracing::{write_color, Color, Hittable, HittableList, Point3, Ray, Sphere, Vec3};
 use std::rc::Rc;
 
-fn ray_color(r: Ray, h: Rc<dyn Hittable>) -> Color {
+fn ray_color(r: Ray, h: &dyn Hittable) -> Color {
     if let Some(hit_record) = h.hit(r, 0.0, f64::INFINITY) {
         return 0.5 * (hit_record.normal + Color::new(1.0, 1.0, 1.0));
     }
@@ -22,7 +22,6 @@ fn main() {
     let mut world = HittableList::new();
     world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
     world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
-    let world_rc = Rc::new(world);
 
     // camera
     let viewport_height = 2.0;
@@ -49,7 +48,7 @@ fn main() {
                 origin,
                 lower_left_corner + (horizontal * x_scale) + (vertical * y_scale),
             );
-            let pixel_color = ray_color(r, world_rc.clone());
+            let pixel_color = ray_color(r, &world);
             write_color(pixel_color);
         }
     }
