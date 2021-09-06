@@ -78,7 +78,7 @@ impl Vec3 {
     }
 
     pub fn rand_unit_vector() -> Self {
-        Self::unit(Self::rand_in_range(-1.0, 1.0))
+        Self::unit(Self::rand_in_unit_sphere())
     }
 
     pub fn rand_in_hemisphere(normal: Vec3) -> Self {
@@ -93,6 +93,11 @@ impl Vec3 {
     // reflects v amongst some surface where n is a unit normal vector
     pub fn reflect(v: Self, n: Self) -> Self {
         v - (2.0 * Self::dot(v, n) * n)
+    }
+
+    pub fn near_zero(&self) -> bool {
+        let eps = 0.00000001;
+        self.x().abs() < eps && self.y().abs() < eps && self.z().abs() < eps
     }
 }
 
