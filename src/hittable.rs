@@ -1,7 +1,7 @@
 use crate::{Material, Point3, Ray, Vec3};
 use std::rc::Rc;
 
-// #[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct HitRecord {
     pub point: Point3,
     pub normal: Vec3,

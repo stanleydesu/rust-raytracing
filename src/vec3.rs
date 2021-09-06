@@ -89,6 +89,11 @@ impl Vec3 {
             -vec
         }
     }
+
+    // reflects v amongst some surface where n is a unit normal vector
+    pub fn reflect(v: Self, n: Self) -> Self {
+        v - (2.0 * Self::dot(v, n) * n)
+    }
 }
 
 impl Neg for Vec3 {

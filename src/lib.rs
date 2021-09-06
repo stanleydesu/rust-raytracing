@@ -18,7 +18,11 @@ pub type Sphere = sphere::Sphere;
 pub type Camera = camera::Camera;
 pub use color::{write_color, write_sampled_color};
 pub use hittable::Hittable;
+
 pub use material::Material;
+pub type Lambertian = material::Lambertian;
+pub type Metal = material::Metal;
+pub type Reflectance = material::Reflectance;
 
 pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     if x < min {
