@@ -1,3 +1,4 @@
+use crate::{rand_f64, rand_in_range};
 use std::{
     fmt,
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub},
@@ -53,6 +54,18 @@ impl Vec3 {
 
     pub fn unit(vec: Self) -> Self {
         vec / vec.length()
+    }
+
+    pub fn rand() -> Self {
+        Self::new(rand_f64(), rand_f64(), rand_f64())
+    }
+
+    pub fn rand_in_range(min: f64, max: f64) -> Self {
+        Self::new(
+            rand_in_range(min, max),
+            rand_in_range(min, max),
+            rand_in_range(min, max),
+        )
     }
 }
 
