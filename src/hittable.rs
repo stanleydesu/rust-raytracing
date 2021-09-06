@@ -1,9 +1,11 @@
-use crate::{Point3, Ray, Vec3};
+use crate::{Material, Point3, Ray, Vec3};
+use std::rc::Rc;
 
-#[derive(Copy, Clone, Debug)]
+// #[derive(Copy, Clone)]
 pub struct HitRecord {
     pub point: Point3,
     pub normal: Vec3,
+    pub mat_ptr: Rc<dyn Material>,
     pub t: f64,
     pub is_front_face: bool,
 }

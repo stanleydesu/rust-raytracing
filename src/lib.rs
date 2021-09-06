@@ -4,6 +4,7 @@ mod camera;
 mod color;
 mod hittable;
 mod hittable_list;
+mod material;
 mod ray;
 mod sphere;
 mod vec3;
@@ -17,6 +18,7 @@ pub type Sphere = sphere::Sphere;
 pub type Camera = camera::Camera;
 pub use color::{write_color, write_sampled_color};
 pub use hittable::Hittable;
+pub use material::Material;
 
 pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     if x < min {

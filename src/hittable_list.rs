@@ -26,8 +26,8 @@ impl Hittable for HittableList {
 
         for object in self.objects.iter() {
             if let Some(obj_hit_rec) = object.hit(r, t_min, curr_t_max) {
-                hit_rec = Some(obj_hit_rec);
                 curr_t_max = obj_hit_rec.t;
+                hit_rec = Some(obj_hit_rec);
             }
         }
         hit_rec
