@@ -17,8 +17,8 @@ pub fn write_sampled_color(pixel_color: Color, samples_per_pixel: u32) {
     let scaled_color = pixel_color * scale;
     println!(
         "{} {} {}",
-        (256_f64 * clamp(scaled_color.x(), 0.0, 0.999)) as u8,
-        (256_f64 * clamp(scaled_color.y(), 0.0, 0.999)) as u8,
-        (256_f64 * clamp(scaled_color.z(), 0.0, 0.999)) as u8,
+        (256_f64 * clamp(scaled_color.x().sqrt(), 0.0, 0.999)) as u8,
+        (256_f64 * clamp(scaled_color.y().sqrt(), 0.0, 0.999)) as u8,
+        (256_f64 * clamp(scaled_color.z().sqrt(), 0.0, 0.999)) as u8,
     );
 }

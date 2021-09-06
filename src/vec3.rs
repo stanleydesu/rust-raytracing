@@ -67,6 +67,15 @@ impl Vec3 {
             rand_in_range(min, max),
         )
     }
+
+    pub fn rand_in_unit_sphere() -> Self {
+        loop {
+            let vec = Self::rand_in_range(-1.0, 1.0);
+            if vec.length_squared() < 1.0 {
+                return vec;
+            }
+        }
+    }
 }
 
 impl Neg for Vec3 {
