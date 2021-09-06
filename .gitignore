@@ -1,3 +1,3 @@
 /target
 # image output file for testing
-desu.ppm
+*.ppm
