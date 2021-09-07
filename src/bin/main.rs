@@ -65,7 +65,7 @@ fn main() {
     )));
 
     // camera
-    let cam = Camera::default();
+    let cam = Camera::new(90.0, aspect_ratio);
 
     // PPM image format specifications
     println!("P3"); // colors are in ascii
