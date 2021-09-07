@@ -90,6 +90,15 @@ impl Vec3 {
         }
     }
 
+    pub fn rand_in_unit_disk() -> Self {
+        loop {
+            let p = Vec3::new(rand_in_range(-1.0, 1.0), rand_in_range(-1.0, 1.0), 0.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
     // reflects v amongst some surface where n is a unit normal vector
     pub fn reflect(v: Self, n: Self) -> Self {
         v - (2.0 * Self::dot(v, n) * n)
