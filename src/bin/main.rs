@@ -1,12 +1,77 @@
 use raytracing::{
-    rand_f64, write_sampled_color, Camera, Color, Dieletric, Hittable, HittableList, Lambertian,
-    Metal, Point3, Ray, Sphere, Vec3,
+    rand_f64, rand_in_range, write_sampled_color, Camera, Color, Dieletric, Hittable, HittableList,
+    Lambertian, Material, Metal, Point3, Ray, Sphere, Vec3,
 };
 use std::rc::Rc;
 
-fn ray_color(r: Ray, world: &dyn Hittable, depth: i32) -> Color {
+fn random_scene() -> HittableList {
+    let mut world = HittableList::new();
+    let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    )));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mat = rand_f64();
+            let center = Point3::new(
+                a as f64 + 0.9 * rand_f64(),
+                0.2,
+                b as f64 + 0.9 * rand_f64(),
+            );
+
+            if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                let sphere_material: Rc<dyn Material>;
+
+                if choose_mat < 0.8 {
+                    // diffuse
+                    let albedo = Color::rand() * Color::rand();
+                    sphere_material = Rc::new(Lambertian::new(albedo));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                } else if choose_mat < 0.95 {
+                    // metal
+                    let albedo = Color::rand_in_range(0.5, 1.0);
+                    let fuzz = rand_in_range(0.0, 0.5);
+                    sphere_material = Rc::new(Metal::new(albedo, fuzz));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                } else {
+                    // glass
+                    sphere_material = Rc::new(Dieletric::new(1.5));
+                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                }
+            }
+        }
+    }
+
+    let material1 = Rc::new(Dieletric::new(1.5));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    )));
+
+    let material2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    )));
+
+    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    )));
+
+    world
+}
+
+fn ray_color(r: Ray, world: &dyn Hittable, depth: u32) -> Color {
     if depth <= 0 {
-        return Color::zero(); // recursed ray didn't hit anything, so return black
+        return Color::zero();
     }
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         if let Some(reflectance) = rec.mat_ptr.scatter(r, rec.clone()) {
@@ -16,65 +81,30 @@ fn ray_color(r: Ray, world: &dyn Hittable, depth: i32) -> Color {
         return Color::zero();
     }
     let unit_direction = Vec3::unit(r.direction());
-    // t = y mapped to the range 0..1
     let t = 0.5 * (unit_direction.y() + 1.0);
-    // linear blend of blue to white
     ((1.0 - t) * Color::new(1.0, 1.0, 1.0)) + (t * Color::new(0.5, 0.7, 1.0))
 }
 
 fn main() {
     // image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400u32;
+    let aspect_ratio = 3.0 / 2.0;
+    let image_width = 1200u32;
     let image_height = (image_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 100u32;
-    let max_depth = 50i32;
-
-    // world
-    let mut world = HittableList::new();
-    let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let center_mat = Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
-    let left_mat = Rc::new(Dieletric::new(1.5));
-    let right_mat = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, -100.5, -1.0),
-        100.0,
-        ground_mat,
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, 0.0, -1.0),
-        0.5,
-        center_mat,
-    )));
-
-    // hollow glass sphere, using negative radius so surface normal points inwards
-    world.add(Rc::new(Sphere::new(
-        Point3::new(-1.0, 0.0, -1.0),
-        0.5,
-        left_mat.clone(),
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(-1.0, 0.0, -1.0),
-        -0.4,
-        left_mat.clone(),
-    )));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(1.0, 0.0, -1.0),
-        0.5,
-        right_mat,
-    )));
+    let samples_per_pixel = 500u32;
+    let max_depth = 50u32;
 
     // camera
-    let look_from = Point3::new(3.0, 3.0, 2.0);
-    let look_at = Point3::new(0.0, 0.0, -1.0);
+    let look_from = Point3::new(13.0, 2.0, 3.0);
+    let look_at = Point3::new(0.0, 0.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = (look_from - look_at).length();
-    let aperture = 2.0;
+    let dist_to_focus = 10.0;
+    let aperture = 0.1;
+    let vertical_fov = 20.0;
     let cam = Camera::new(
         look_from,
         look_at,
         vup,
-        20.0,
+        vertical_fov,
         aspect_ratio,
         aperture,
         dist_to_focus,
@@ -84,6 +114,9 @@ fn main() {
     println!("P3"); // colors are in ascii
     println!("{} {}", image_width, image_height);
     println!("{}", 255);
+
+    // world
+    let world = random_scene();
 
     for y in (0..image_height).rev() {
         eprintln!("Scanlines remaining: {}", y);
