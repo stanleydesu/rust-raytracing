@@ -1,5 +1,6 @@
 use raytracing::{
-    rand_f64, write_sampled_color, Camera, Color, Hittable, HittableList, Point3, Ray, Sphere, Vec3,
+    rand_f64, write_sampled_color, Camera, Color, Hittable, HittableList, Lambertian, Point3, Ray,
+    Sphere, Vec3,
 };
 use std::rc::Rc;
 
@@ -28,8 +29,18 @@ fn main() {
 
     // world
     let mut world = HittableList::new();
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+    let ground_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    let center_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        center_mat,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        ground_mat,
+    )));
 
     // camera
     let cam = Camera::default();

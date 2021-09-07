@@ -21,7 +21,11 @@ impl Lambertian {
 
 impl Material for Lambertian {
     fn scatter(&self, _: Ray, rec: HitRecord) -> Option<Reflectance> {
-        let scatter_direction = rec.point + Vec3::rand_in_hemisphere(rec.normal);
+        let mut scatter_direction = rec.normal + Vec3::rand_in_unit_sphere();
+        // handle degenerate scatter direction
+        if scatter_direction.near_zero() {
+            scatter_direction = rec.normal;
+        }
         Some(Reflectance {
             scattered_ray: Ray::new(rec.point, scatter_direction),
             attenuation: self.albedo,

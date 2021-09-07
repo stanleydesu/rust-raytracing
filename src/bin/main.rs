@@ -14,7 +14,6 @@ fn ray_color(r: Ray, world: &dyn Hittable, depth: i32) -> Color {
                 * ray_color(reflectance.scattered_ray, world, depth - 1);
         }
         return Color::zero();
-        // return 0.5 * (ray_color(Ray::new(rec.point, target - rec.point), world, depth - 1));
     }
     let unit_direction = Vec3::unit(r.direction());
     // t = y mapped to the range 0..1
