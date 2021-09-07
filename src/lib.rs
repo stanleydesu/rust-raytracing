@@ -22,6 +22,7 @@ pub use hittable::Hittable;
 pub use material::Material;
 pub type Lambertian = material::Lambertian;
 pub type Metal = material::Metal;
+pub type Dieletric = material::Dieletric;
 pub type Reflectance = material::Reflectance;
 
 pub fn clamp(x: f64, min: f64, max: f64) -> f64 {

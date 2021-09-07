@@ -1,4 +1,4 @@
-use crate::{clamp, Color, HitRecord, Ray, Vec3};
+use crate::{clamp, rand_f64, Color, HitRecord, Ray, Vec3};
 
 pub trait Material {
     fn scatter(&self, r_in: Ray, rec: HitRecord) -> Option<Reflectance>;
@@ -63,5 +63,48 @@ impl Material for Metal {
         } else {
             None
         }
+    }
+}
+
+pub struct Dieletric {
+    index_of_refraction: f64,
+}
+
+impl Dieletric {
+    pub fn new(index_of_refraction: f64) -> Self {
+        Self {
+            index_of_refraction,
+        }
+    }
+
+    fn reflectance(cosine: f64, ref_index: f64) -> f64 {
+        // use Schlick's approximation for reflectance
+        let r0 = ((1 as f64 - ref_index) / (1 as f64 + ref_index)).powi(2);
+        r0 + (1 as f64 - r0) * (1 as f64 - cosine).powi(5)
+    }
+}
+
+impl Material for Dieletric {
+    fn scatter(&self, r_in: Ray, rec: HitRecord) -> Option<Reflectance> {
+        let refraction_ratio = if rec.is_front_face {
+            1.0 / self.index_of_refraction
+        } else {
+            self.index_of_refraction
+        };
+        let unit_direction = Vec3::unit(r_in.direction());
+
+        let cos_theta = Vec3::dot(-unit_direction, rec.normal).min(1.0);
+        let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
+        let cannot_refract = refraction_ratio * sin_theta > 1.0;
+        let direction =
+            if cannot_refract || Dieletric::reflectance(cos_theta, refraction_ratio) > rand_f64() {
+                Vec3::reflect(unit_direction, rec.normal)
+            } else {
+                Vec3::refract(unit_direction, rec.normal, refraction_ratio)
+            };
+        Some(Reflectance {
+            scattered_ray: Ray::new(rec.point, direction),
+            attenuation: Color::new(1.0, 1.0, 1.0),
+        })
     }
 }
