@@ -5,7 +5,7 @@ use raytracing::{
 use std::rc::Rc;
 
 fn ray_color(r: Ray, world: &dyn Hittable, depth: i32) -> Color {
-    if depth <= 0 {
+    if depth == 0 {
         return Color::zero(); // recursed ray didn't hit anything, so return black
     }
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {

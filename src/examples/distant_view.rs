@@ -1,16 +1,19 @@
 use raytracing::{
-    rand_f64, write_sampled_color, Camera, Color, Hittable, HittableList, Lambertian, Point3, Ray,
-    Sphere, Vec3,
+    rand_f64, write_sampled_color, Camera, Color, Dieletric, Hittable, HittableList, Lambertian,
+    Metal, Point3, Ray, Sphere, Vec3,
 };
 use std::rc::Rc;
 
 fn ray_color(r: Ray, world: &dyn Hittable, depth: i32) -> Color {
-    if depth <= 0 {
+    if depth == 0 {
         return Color::zero(); // recursed ray didn't hit anything, so return black
     }
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        let target = rec.point + Vec3::rand_in_hemisphere(rec.normal);
-        return 0.5 * (ray_color(Ray::new(rec.point, target - rec.point), world, depth - 1));
+        if let Some(reflectance) = rec.mat_ptr.scatter(r, rec.clone()) {
+            return reflectance.attenuation
+                * ray_color(reflectance.scattered_ray, world, depth - 1);
+        }
+        return Color::zero();
     }
     let unit_direction = Vec3::unit(r.direction());
     // t = y mapped to the range 0..1
@@ -29,21 +32,46 @@ fn main() {
 
     // world
     let mut world = HittableList::new();
-    let ground_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    let center_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, 0.0, -1.0),
-        0.5,
-        center_mat,
-    )));
+    let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let center_mat = Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
+    let left_mat = Rc::new(Dieletric::new(1.5));
+    let right_mat = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, -100.5, -1.0),
         100.0,
         ground_mat,
     )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        center_mat,
+    )));
+
+    // hollow glass sphere, using negative radius so surface normal points inwards
+    world.add(Rc::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        0.5,
+        left_mat.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        -0.4,
+        left_mat.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(1.0, 0.0, -1.0),
+        0.5,
+        right_mat,
+    )));
 
     // camera
-    let cam = Camera::default();
+    let cam = Camera::new(
+        Point3::new(-2.0, 2.0, 1.0),
+        Point3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        60.0,
+        aspect_ratio,
+    );
 
     // PPM image format specifications
     println!("P3"); // colors are in ascii
