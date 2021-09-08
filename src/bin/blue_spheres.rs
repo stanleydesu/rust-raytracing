@@ -5,7 +5,7 @@ use raytracing::{
 use std::rc::Rc;
 
 fn random_scene() -> HittableList {
-    let mut world = HittableList::new();
+    let mut world = HittableList::default();
     let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
@@ -15,7 +15,7 @@ fn random_scene() -> HittableList {
 
     let metal_mat = Rc::new(Metal::new(Color::new(1.0, 1.0, 1.0), 0.0));
     let metal_p = Point3::new(-4.0, 1.0, 0.5);
-    world.add(Rc::new(Sphere::new(metal_p, 1.0, metal_mat.clone())));
+    world.add(Rc::new(Sphere::new(metal_p, 1.0, metal_mat)));
 
     let glass_mat = Rc::new(Dieletric::new(1.5));
     let glass_p = Point3::new(5.0, 1.0, 0.5);
@@ -25,7 +25,7 @@ fn random_scene() -> HittableList {
 
     let lamber_mat = Rc::new(Lambertian::new(Color::new(0.2, 0.2, 0.2)));
     let lamber_p = Point3::new(-1.0, 1.0, -3.0);
-    world.add(Rc::new(Sphere::new(lamber_p, 1.0, lamber_mat.clone())));
+    world.add(Rc::new(Sphere::new(lamber_p, 1.0, lamber_mat)));
 
     let colors = vec![
         Color::new(3., 4., 94.) / 255.,
@@ -42,7 +42,7 @@ fn random_scene() -> HittableList {
     for a in -11..11 {
         for b in -11..11 {
             let choose_mat = rand_f64();
-            let mut center = Point3::new(
+            let center = Point3::new(
                 a as f64 + 0.7 * rand_f64(),
                 0.2,
                 b as f64 + 0.7 * rand_f64(),
@@ -54,18 +54,15 @@ fn random_scene() -> HittableList {
 
             if can_spawn {
                 let sphere_material: Rc<dyn Material>;
-
                 if choose_mat < 0.8 {
                     // diffuse
                     let albedo = colors[(rand_in_range(0.0, colors.len() as f64)) as usize];
                     sphere_material = Rc::new(Lambertian::new(albedo));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
                     sphere_material = glass_mat.clone();
-                    center[1] = 0.2; // glass balls on the ground
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
+                world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
             }
         }
     }
@@ -74,7 +71,7 @@ fn random_scene() -> HittableList {
 }
 
 fn ray_color(r: Ray, world: &dyn Hittable, depth: u32) -> Color {
-    if depth <= 0 {
+    if depth == 0 {
         return Color::zero();
     }
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {

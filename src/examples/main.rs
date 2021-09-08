@@ -5,7 +5,7 @@ use raytracing::{
 use std::rc::Rc;
 
 fn random_scene() -> HittableList {
-    let mut world = HittableList::new();
+    let mut world = HittableList::default();
     let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),

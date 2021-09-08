@@ -79,8 +79,8 @@ impl Dieletric {
 
     fn reflectance(cosine: f64, ref_index: f64) -> f64 {
         // use Schlick's approximation for reflectance
-        let r0 = ((1 as f64 - ref_index) / (1 as f64 + ref_index)).powi(2);
-        r0 + (1 as f64 - r0) * (1 as f64 - cosine).powi(5)
+        let r0 = ((1_f64 - ref_index) / (1_f64 + ref_index)).powi(2);
+        r0 + (1_f64 - r0) * (1_f64 - cosine).powi(5)
     }
 }
 

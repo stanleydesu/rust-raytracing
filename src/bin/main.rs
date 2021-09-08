@@ -5,7 +5,7 @@ use raytracing::{
 use std::rc::Rc;
 
 fn random_scene() -> HittableList {
-    let mut world = HittableList::new();
+    let mut world = HittableList::default();
     let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     world.add(Rc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
@@ -29,18 +29,16 @@ fn random_scene() -> HittableList {
                     // diffuse
                     let albedo = Color::rand() * Color::rand();
                     sphere_material = Rc::new(Lambertian::new(albedo));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else if choose_mat < 0.95 {
                     // metal
                     let albedo = Color::rand_in_range(0.5, 1.0);
                     let fuzz = rand_in_range(0.0, 0.5);
                     sphere_material = Rc::new(Metal::new(albedo, fuzz));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
                     sphere_material = Rc::new(Dieletric::new(1.5));
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
+                world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
             }
         }
     }
@@ -70,7 +68,7 @@ fn random_scene() -> HittableList {
 }
 
 fn ray_color(r: Ray, world: &dyn Hittable, depth: u32) -> Color {
-    if depth <= 0 {
+    if depth == 0 {
         return Color::zero();
     }
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {

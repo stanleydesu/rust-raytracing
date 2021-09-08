@@ -31,7 +31,7 @@ fn main() {
     let max_depth = 50i32;
 
     // world
-    let mut world = HittableList::new();
+    let mut world = HittableList::default();
     let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
     let center_mat = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
     let left_mat = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.0));
