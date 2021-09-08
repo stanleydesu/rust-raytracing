@@ -28,15 +28,14 @@ fn random_scene() -> HittableList {
     world.add(Rc::new(Sphere::new(lamber_p, 1.0, lamber_mat.clone())));
 
     let colors = vec![
-        Color::new(3., 4., 94.) / 255.,
-        Color::new(2., 62., 138.) / 255.,
-        Color::new(0., 119., 182.) / 255.,
-        Color::new(0., 150., 199.) / 255.,
-        Color::new(0., 180., 216.) / 255.,
-        Color::new(72., 202., 228.) / 255.,
-        Color::new(144., 224., 239.) / 255.,
-        Color::new(173., 232., 244.) / 255.,
-        Color::new(202., 240., 248.) / 255.,
+        Color::new(0., 75., 35.) / 255.,
+        Color::new(0., 100., 0.) / 255.,
+        Color::new(0., 114., 0.) / 255.,
+        Color::new(0., 128., 0.) / 255.,
+        Color::new(56., 176., 0.) / 255.,
+        Color::new(112., 224., 0.) / 255.,
+        Color::new(158., 240., 26.) / 255.,
+        Color::new(204., 255., 51.) / 255.,
     ];
 
     for a in -11..11 {
@@ -92,9 +91,9 @@ fn ray_color(r: Ray, world: &dyn Hittable, depth: u32) -> Color {
 fn main() {
     // image
     let aspect_ratio = 3.0 / 2.0;
-    let image_width = 400u32;
+    let image_width = 1200u32;
     let image_height = (image_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 100u32;
+    let samples_per_pixel = 500u32;
     let max_depth = 50u32;
 
     // camera
