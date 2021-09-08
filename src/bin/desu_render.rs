@@ -14,23 +14,46 @@ fn random_scene() -> HittableList {
         ground_material,
     )));
 
+    let metal_mat = Rc::new(Metal::new(Color::new(1.0, 1.0, 1.0), 0.0));
+
+    let glass_mat = Rc::new(Dieletric::new(1.5));
+    let glass_p = Point3::new(4.0, 1.0, 1.0);
+    world.add(Rc::new(Sphere::new(glass_p, 1.0, glass_mat.clone())));
+    let glass_hollow = Point3::new(4.0, 1.0, 1.0);
+    world.add(Rc::new(Sphere::new(glass_hollow, -0.9, glass_mat.clone())));
+
+    let lamber_mat = Rc::new(Lambertian::new(Color::new(0.3, 0.3, 0.3)));
+    let lamber_p = Point3::new(-1.0, 1.2, -3.0);
+    world.add(Rc::new(Sphere::new(lamber_p, 1.2, lamber_mat.clone())));
+
+    let metal_p = Point3::new(-4.0, 1.0, 3.3);
+    world.add(Rc::new(Sphere::new(metal_p, 1.0, metal_mat.clone())));
+
+    let look_from = Point3::new(16.0, 2.0, 3.0);
+
     for a in -11..11 {
         for b in -11..11 {
             let choose_mat = rand_f64();
-            let is_airborne = if choose_mat > 0.4 { 1.0 } else { 0.0 };
+            let is_airborne = if choose_mat > 0.5 { 1.0 } else { 0.0 };
+            let vert_d = 0.2 + is_airborne * rand_in_range(0.0, 2.0);
             let mut center = Point3::new(
-                a as f64 + 0.9 * rand_f64(),
-                0.2 + is_airborne * rand_in_range(0.0, 4.2),
-                b as f64 + 0.9 * rand_f64(),
+                a as f64 + 0.7 * rand_f64(),
+                vert_d,
+                b as f64 + 0.7 * rand_f64(),
             );
 
-            if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+            let can_spawn = (center - glass_p).length() > 1.2
+                && (center - lamber_p).length() > 1.2
+                && (center - metal_p).length() > 1.2
+                && (center - look_from).length() > 8.0;
+
+            if can_spawn {
                 let sphere_material: Rc<dyn Material>;
 
-                if choose_mat < 0.7 {
+                if choose_mat < 0.9 {
                     // diffuse
                     let albedo_hsl = HSL {
-                        h: rand_in_range(0.0, 360.0),
+                        h: rand_in_range(0.0, 320.0),
                         s: 1.0,
                         l: 0.5,
                     };
@@ -42,42 +65,15 @@ fn random_scene() -> HittableList {
                     );
                     sphere_material = Rc::new(Lambertian::new(albedo));
                     world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
-                } else if choose_mat < 0.8 {
-                    // metal
-                    let albedo = Color::new(1.0, 1.0, 1.0);
-                    let fuzz = 0.0;
-                    sphere_material = Rc::new(Metal::new(albedo, fuzz));
-                    center[1] = 0.2; // metal balls on the ground only
-                    world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
-                } else {
+                } else if choose_mat < 1.0 {
                     // glass
-                    sphere_material = Rc::new(Dieletric::new(1.5));
+                    sphere_material = glass_mat.clone();
+                    center[1] = 0.2; // glass balls on the ground
                     world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
             }
         }
     }
-
-    let material1 = Rc::new(Dieletric::new(1.5));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, 1.0, 0.0),
-        1.0,
-        material1,
-    )));
-
-    let material2 = Rc::new(Lambertian::new(Color::new(0.0, 0.8, 0.2)));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(-4.0, 1.0, 0.0),
-        1.0,
-        material2,
-    )));
-
-    let material3 = Rc::new(Metal::new(Color::new(1.0, 1.0, 1.0), 0.0));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(4.0, 1.0, 0.0),
-        1.0,
-        material3,
-    )));
 
     world
 }
@@ -95,19 +91,19 @@ fn ray_color(r: Ray, world: &dyn Hittable, depth: u32) -> Color {
     }
     let unit_direction = Vec3::unit(r.direction());
     let t = 0.5 * (unit_direction.y() + 1.0);
-    ((1.0 - t) * Color::new(1.0, 1.0, 1.0)) + (t * Color::new(0.5, 0.7, 1.0))
+    ((1.0 - t) * Color::new(1.0, 1.0, 1.0)) + (t * Color::new(0.3, 0.7, 1.0))
 }
 
 fn main() {
     // image
     let aspect_ratio = 3.0 / 2.0;
-    let image_width = 600u32;
+    let image_width = 400u32;
     let image_height = (image_width as f64 / aspect_ratio) as u32;
-    let samples_per_pixel = 200u32;
+    let samples_per_pixel = 100u32;
     let max_depth = 50u32;
 
     // camera
-    let look_from = Point3::new(13.0, 5.0, 3.0);
+    let look_from = Point3::new(16.0, 2.0, 3.0);
     let look_at = Point3::new(0.0, 0.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
