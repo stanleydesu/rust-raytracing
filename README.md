@@ -10,3 +10,4 @@ Fun easy way to pick up and learn Rust (was roughly my first attempt at Rust, so
 
 ![Final render](./final_render.png)*Final render*
 
+Above images each took ~ 3 hours to render. 
