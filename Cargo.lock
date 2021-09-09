@@ -68,12 +68,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hsl"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "575fb7f1167f3b88ed825e90eb14918ac460461fdeaa3965c6a50951dee1c970"
-
-[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -186,7 +180,6 @@ name = "raytracing"
 version = "0.1.0"
 dependencies = [
  "approx",
- "hsl",
  "proptest",
  "rand",
 ]
