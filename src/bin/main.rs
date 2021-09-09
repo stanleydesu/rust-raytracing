@@ -13,6 +13,27 @@ fn random_scene() -> HittableList {
         ground_material,
     )));
 
+    let glass_mat = Rc::new(Dieletric::new(1.5));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 1.0, 0.0),
+        1.0,
+        glass_mat,
+    )));
+
+    let lamb_mat = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(-4.0, 1.0, 0.0),
+        1.0,
+        lamb_mat,
+    )));
+
+    let metal_mat = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(4.0, 1.0, 0.0),
+        1.0,
+        metal_mat,
+    )));
+
     for a in -11..11 {
         for b in -11..11 {
             let choose_mat = rand_f64();
@@ -42,27 +63,6 @@ fn random_scene() -> HittableList {
             }
         }
     }
-
-    let material1 = Rc::new(Dieletric::new(1.5));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(0.0, 1.0, 0.0),
-        1.0,
-        material1,
-    )));
-
-    let material2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(-4.0, 1.0, 0.0),
-        1.0,
-        material2,
-    )));
-
-    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Rc::new(Sphere::new(
-        Point3::new(4.0, 1.0, 0.0),
-        1.0,
-        material3,
-    )));
 
     world
 }

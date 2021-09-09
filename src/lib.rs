@@ -11,19 +11,13 @@ mod vec3;
 pub type Vec3 = vec3::Vec3; // 3D vector
 pub type Point3 = vec3::Vec3; // 3D point
 pub type Color = vec3::Vec3; // RGB color
-pub type Ray = ray::Ray;
-pub type HitRecord = hittable::HitRecord;
-pub type HittableList = hittable_list::HittableList;
-pub type Sphere = sphere::Sphere;
-pub type Camera = camera::Camera;
-pub use color::{write_color, write_sampled_color};
-pub use hittable::Hittable;
-
-pub use material::Material;
-pub type Lambertian = material::Lambertian;
-pub type Metal = material::Metal;
-pub type Dieletric = material::Dieletric;
-pub type Reflectance = material::Reflectance;
+pub use camera::*;
+pub use color::*;
+pub use hittable::*;
+pub use hittable_list::*;
+pub use material::*;
+pub use ray::*;
+pub use sphere::*;
 
 pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     if x < min {
