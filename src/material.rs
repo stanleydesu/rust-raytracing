@@ -1,6 +1,6 @@
 use crate::{clamp, rand_f64, Color, HitRecord, Ray, Vec3};
 
-pub trait Material {
+pub trait Material: Sync {
     fn scatter(&self, r_in: Ray, rec: HitRecord) -> Option<Reflectance>;
 }
 

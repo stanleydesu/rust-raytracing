@@ -2,12 +2,12 @@ use raytracing::{
     rand_f64, rand_in_range, write_sampled_color, Camera, Color, Dieletric, Hittable, HittableList,
     Lambertian, Material, Metal, Point3, Ray, Sphere, Vec3,
 };
-use std::rc::Rc;
+use std::sync::Arc;
 
 fn random_scene() -> HittableList {
     let mut world = HittableList::default();
-    let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Rc::new(Sphere::new(
+    let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -23,42 +23,42 @@ fn random_scene() -> HittableList {
             );
 
             if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
-                let sphere_material: Rc<dyn Material + Send + Sync>;
+                let sphere_material: Arc<dyn Material + Send + Sync>;
 
                 if choose_mat < 0.8 {
                     // diffuse
                     let albedo = Color::rand() * Color::rand();
-                    sphere_material = Rc::new(Lambertian::new(albedo));
+                    sphere_material = Arc::new(Lambertian::new(albedo));
                 } else if choose_mat < 0.95 {
                     // metal
                     let albedo = Color::rand_in_range(0.5, 1.0);
                     let fuzz = rand_in_range(0.0, 0.5);
-                    sphere_material = Rc::new(Metal::new(albedo, fuzz));
+                    sphere_material = Arc::new(Metal::new(albedo, fuzz));
                 } else {
                     // glass
-                    sphere_material = Rc::new(Dieletric::new(1.5));
+                    sphere_material = Arc::new(Dieletric::new(1.5));
                 }
-                world.add(Rc::new(Sphere::new(center, 0.2, sphere_material)));
+                world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
             }
         }
     }
 
-    let material1 = Rc::new(Dieletric::new(1.5));
-    world.add(Rc::new(Sphere::new(
+    let material1 = Arc::new(Dieletric::new(1.5));
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
-    let material2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Rc::new(Sphere::new(
+    let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Arc::new(Sphere::new(
         Point3::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     )));
 
-    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Rc::new(Sphere::new(
+    let material3 = Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Arc::new(Sphere::new(
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material3,

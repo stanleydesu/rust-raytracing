@@ -1,6 +1,7 @@
 use crate::{rand_f64, rand_in_range};
 use std::{
     fmt,
+    iter::Sum,
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub},
 };
 
@@ -200,6 +201,15 @@ impl Div<f64> for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: f64) -> Self::Output {
         self * (1_f64 / rhs)
+    }
+}
+
+impl Sum for Vec3 {
+    fn sum<I>(iter: I) -> Self
+    where
+        I: Iterator<Item = Self>,
+    {
+        iter.fold(Self::zero(), |a, b| a + b)
     }
 }
 

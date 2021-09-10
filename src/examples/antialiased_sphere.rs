@@ -1,7 +1,7 @@
 use raytracing::{
     rand_f64, write_sampled_color, Camera, Color, Hittable, HittableList, Point3, Ray, Sphere, Vec3,
 };
-use std::rc::Rc;
+use std::sync::Arc;
 
 fn ray_color(r: Ray, h: &dyn Hittable) -> Color {
     if let Some(hit_record) = h.hit(r, 0.0, f64::INFINITY) {
@@ -23,8 +23,8 @@ fn main() {
 
     // world
     let mut world = HittableList::default();
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+    world.add(Arc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Arc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
     // camera
     let cam = Camera::default();

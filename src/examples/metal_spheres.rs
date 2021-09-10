@@ -2,7 +2,7 @@ use raytracing::{
     rand_f64, write_sampled_color, Camera, Color, Hittable, HittableList, Lambertian, Metal,
     Point3, Ray, Sphere, Vec3,
 };
-use std::rc::Rc;
+use std::sync::Arc;
 
 fn ray_color(r: Ray, world: &dyn Hittable, depth: i32) -> Color {
     if depth == 0 {
@@ -32,26 +32,26 @@ fn main() {
 
     // world
     let mut world = HittableList::default();
-    let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let center_mat = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
-    let left_mat = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.0));
-    let right_mat = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
-    world.add(Rc::new(Sphere::new(
+    let ground_mat = Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let center_mat = Arc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let left_mat = Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.0));
+    let right_mat = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0));
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, -100.5, -1.0),
         100.0,
         ground_mat,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(0.0, 0.0, -1.0),
         0.5,
         center_mat,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(-1.0, 0.0, -1.0),
         0.5,
         left_mat,
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(1.0, 0.0, -1.0),
         0.5,
         right_mat,
