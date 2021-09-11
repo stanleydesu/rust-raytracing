@@ -11,3 +11,7 @@ Fun easy way to pick up and learn Rust (was roughly my first attempt at Rust, so
 ![Final render](./final_render.png)*Final render*
 
 Above images each took ~ 3 hours to render. 
+
+Multithreaded implementation in the multithreading branch, using Rayon.
+
+Binaries of scenes throughout the book in src/examples; some don't compile due to the codebase evolving, but they can still serve as helpful examples.
